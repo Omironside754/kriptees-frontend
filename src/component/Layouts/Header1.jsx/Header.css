@@ -1,0 +1,305 @@
+@import url('https://fonts.googleapis.com/css2?family=Inknut+Antiqua:wght@300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inknut+Antiqua:wght@300;400;500;600;700;800;900&family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+
+@font-face {
+  font-family: "myFirstFont";
+  src: url(DIMIS___.TTF);
+}
+
+.kriptees-main {
+  font-family: "myFirstFont";
+  font-size: 2.25rem;
+  text-align: center;
+  padding-top: 1rem;
+  margin-bottom: -1rem;
+}
+
+.header {
+  background-color: #ffffff;
+  font-size: 0.75rem;
+  padding: 0;
+  position: fixed;
+  border-bottom: 1px white solid;
+  top: 0;
+  width: 100%;
+  z-index: 999;
+  /* align-items: center; */
+
+  display: flex;
+  flex-direction: column;
+  /* height: 4rem; */
+  /* box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15), 0 2px 4px rgba(0, 0, 0, 0.1); */
+}
+
+.red {
+  background-color: #DA0440;
+  color: #ffffff;
+  font-size: 12px;
+  font-family: "Roboto", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  text-align: center;
+  padding: 4px;
+}
+
+.header h1 {
+  text-align: center;
+  font-family: "Inknut Antiqua", serif;
+  font-weight: 800;
+  font-style: normal;
+  font-size: 24px;
+  margin: -8px;
+}
+
+.headerTop {
+  width: 100%;
+
+  background-color: rgb(37, 37, 37);
+  color: rgb(255, 255, 255);
+  display: grid;
+  font-size: 12px;
+  grid-template-columns: 1fr minmax(465px, 1fr);
+  height: 33px;
+  margin: 0px auto;
+  padding: 0px;
+  position: relative;
+  vertical-align: middle;
+  z-index: 999;
+}
+
+.headerTopLeft {
+  height: fit-content;
+  font-size: 16px !important;
+  font-weight: 500;
+  /* margin-left: 2.5rem; */
+  /* margin-bottom: -10px; */
+}
+
+.headerTopLeft>p {
+  position: absolute;
+  top: -9px;
+}
+
+.headerTopRight {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 400;
+  font-size: 12px !important;
+}
+
+.headerRetailer {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+
+}
+
+.headerFlag {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.headerLogin {
+  display: flex;
+  /* width: 110px; */
+  cursor: pointer;
+  /* background-color: rgb(75, 66, 66); */
+  /* padding-right: 5px; */
+  /* padding-left: 30px; */
+}
+
+.headerLogin button {
+  height: 33px;
+  width: 125px;
+  margin: 5px;
+  border-radius: 55px;
+  border: none;
+  text-align: center;
+  color: rgb(255, 255, 255);
+  background-color: #3A68B8;
+  font-weight: 400;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/* #ed1c24 */
+.headerLogin>button:hover {
+  color: #5a5959;
+  transition: all 0.25s ease;
+}
+
+.headerBottom {
+  height: 100%;
+  /* border: 2px solid; */
+  display: flex;
+  justify-content: flex-start;
+
+}
+
+.headerBottom__logo {
+  width: auto;
+  /* height: 52px; */
+  padding: auto;
+  /* align-self: center; */
+}
+
+
+.headerBottom__logo_main {
+  /* height: 5rem; */
+  /* align-self: center; */
+  /* padding-left: 25px; */
+  /* margin-top: 7px; */
+
+}
+
+.header_mobile_menu {
+  display: none;
+}
+
+.headerBottom_navMenu {
+  width: auto;
+  font-family: "Roboto", sans-serif;
+  font-weight: 300;
+  font-style: normal;
+  /* align-self: center; */
+  /* height: 64px; */
+}
+
+.headerBottom_navMenu ul {
+  display: flex;
+  gap: .9rem;
+  /* height: 50px; */
+  width: auto;
+  /* text-align: center; */
+
+  /* margin-top: 5px; */
+}
+
+.headerBottom_navMenu ul li {
+  /* padding: 18px 14px; */
+  width: auto;
+  list-style: none;
+  height: fit-content;
+  /* padding: 30px; */
+  /* padding-bottom: 10px; */
+}
+
+.headerBottom_navMenu ul li a {
+  color: #000000;
+  text-decoration: none;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 15px;
+  font-weight: 400;
+  /* margin-top: 20px; */
+}
+
+.headerBottom_navMenu ul li a:hover {
+  color: #5a5959;
+  transition: .5s ease-in-out;
+}
+
+.headerBotttom_icons {
+  display: flex;
+  gap: 1.1rem;
+  align-items: center;
+  margin-left: auto;
+
+  font-size: 26px !important;
+  width: auto;
+  color: #000000;
+  margin-right: 10px;
+}
+
+.headerBotttom_icons>*:hover {
+  color: #5a5959;
+  transition: .5s ease-in-out;
+}
+
+
+
+.css-6hp17o-MuiList-root-MuiMenu-list {
+  background-color: rgb(0, 0, 0);
+  /* border: none !important; */
+}
+
+.css-i4bv87-MuiSvgIcon-root {
+  padding: 5px !important;
+  color: #000000;
+}
+
+.css-kk1bwy-MuiButtonBase-root-MuiMenuItem-root:hover {
+  background-color: #5a5959 !important;
+
+}
+
+@media (max-width: 899px) {
+  .headerTop {
+    display: flex;
+    /* align-items: center; */
+    /* justify-content: space-between; */
+  }
+
+
+  .kriptees-main {
+    /* display: none; */
+    font-size: 20px;
+  }
+
+  .kriptees-mobile {
+    display: flex;
+    font-family: "myFirstFont";
+    font-size: 24px;
+  }
+
+  .red {
+    display: none;
+  }
+
+  .headerTopLeft {
+    margin-bottom: 3px;
+  }
+
+  .headerTopLeft>p {
+    position: absolute;
+    top: -13px;
+  }
+
+  .headerRetailer {
+    display: none;
+  }
+
+  .headerLogin {
+    display: none;
+  }
+
+
+  .headerBottom {
+    /* display: flex; */
+    /* align-items: center; */
+    /* justify-content: space-around; */
+  }
+
+  .headerBottom__logo {
+    display: flex;
+  }
+
+  .header_mobile_menu {
+    display: flex;
+    gap: .9rem;
+    margin: 0.5rem;
+    /* align-items: center; */
+
+  }
+
+  .search_Bar {
+    /* display: none; */
+  }
+
+  .headerBottom_navMenu {
+    display: none;
+  }
+}
