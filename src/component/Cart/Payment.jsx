@@ -45,7 +45,7 @@ function PaymentComponent() {
     };
     try {
       await axios.post(
-        `https://kriptees-backend.onrender.com/api/v1/order/new`,
+        `https://kriptees-backend-ays7.onrender.com/api/v1/order/new`,
         order,
         config
       );
@@ -91,7 +91,7 @@ function PaymentComponent() {
         },
       };
       const { data } = await axios.post(
-        `https://kriptees-backend.onrender.com/api/v1/payment/createOrder`,
+        `https://kriptees-backend-ays7.onrender.com/api/v1/payment/createOrder`,
         order,
         config
       );

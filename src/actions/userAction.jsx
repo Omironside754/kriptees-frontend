@@ -55,7 +55,7 @@ export function login(email, password) {
       const config = { headers: { "Content-Type": "application/json" } };
 
       const { data } = await axios.post(
-        "https://kriptees-backend.onrender.com/api/v1/login",
+        "https://kriptees-backend-ays7.onrender.com/api/v1/login",
 
         { email, password },
         config
@@ -86,7 +86,7 @@ export function signUp(signupData) {
       };
 
       const { data } = await axios.post(
-        "https://kriptees-backend.onrender.com/api/v1/register",
+        "https://kriptees-backend-ays7.onrender.com/api/v1/register",
 
         signupData,
         config
@@ -117,7 +117,7 @@ export const load_UserProfile = () => async (dispatch) => {
       dispatch({ type: LOAD_USER_SUCCESS, payload: user });
     } else {
       // If user data is not available in session storage, make a backend API call
-      const { data } = await axios.get("https://kriptees-backend.onrender.com/api/v1/profile");
+      const { data } = await axios.get("https://kriptees-backend-ays7.onrender.com/api/v1/profile");
 
 
       dispatch({ type: LOAD_USER_SUCCESS, payload: data.user });
@@ -137,7 +137,7 @@ export function logout() {
     try {
       sessionStorage.removeItem("user");
       localStorage.removeItem("token");
-      await axios.get(`https://kriptees-backend.onrender.com/api/v1/logout`); // token will expired from cookies and no more user data access
+      await axios.get(`https://kriptees-backend-ays7.onrender.com/api/v1/logout`); // token will expired from cookies and no more user data access
       dispatch({ type: LOGOUT_SUCCESS });
 
     } catch (error) {
@@ -163,7 +163,7 @@ export function updateProfile(userData) {
 
 
       const { data } = await axios.put(
-        `https://kriptees-backend.onrender.com/api/v1/profile/update`,
+        `https://kriptees-backend-ays7.onrender.com/api/v1/profile/update`,
 
         userData,
         config
@@ -196,7 +196,7 @@ export function updatePassword(userPassWord) {
       };
 
       const { data } = await axios.put(
-        `https://kriptees-backend.onrender.com/api/v1/password/update`,
+        `https://kriptees-backend-ays7.onrender.com/api/v1/password/update`,
 
         userPassWord,
         config
@@ -224,7 +224,7 @@ export function forgetPassword(email) {
       };
 
       const { data } = await axios.post(
-        `https://kriptees-backend.onrender.com/api/v1/password/forgot`,
+        `https://kriptees-backend-ays7.onrender.com/api/v1/password/forgot`,
 
         email,
         config
@@ -249,7 +249,7 @@ export const resetPassword = (token, passwords) => async (dispatch) => {
     const config = { headers: { "Content-Type": "application/json", Authorization: `${token}` } };
 
     const { data } = await axios.put(
-      `https://kriptees-backend.onrender.com/api/v1/password/reset/${token}`,
+      `https://kriptees-backend-ays7.onrender.com/api/v1/password/reset/${token}`,
 
       passwords,
       config
@@ -276,7 +276,7 @@ export const getAllUsers = () => async (dispatch) => {
       headers: { Authorization: `${token}` }
     };
 
-    const { data } = await axios.get("https://kriptees-backend.onrender.com/api/v1/admin/users",
+    const { data } = await axios.get("https://kriptees-backend-ays7.onrender.com/api/v1/admin/users",
 
       config
     );
@@ -299,7 +299,7 @@ export const getUserDetails = (id) => async (dispatch) => {
         Authorization: `${token}`,
       }
     };
-    const { data } = await axios.get(`https://kriptees-backend.onrender.com/api/v1/admin/user/${id}`, config);
+    const { data } = await axios.get(`https://kriptees-backend-ays7.onrender.com/api/v1/admin/user/${id}`, config);
     dispatch({ type: USER_DETAILS_SUCCESS, payload: data.user });
 
   } catch (error) {
@@ -314,7 +314,7 @@ export const updateUser = (id, userData) => async (dispatch) => {
 
     const config = { headers: { "Content-Type": "application/json", Authorization: `${token}` } }
     const { data } = await axios.put(
-      `https://kriptees-backend.onrender.com/api/v1/admin/user/${id}`, userData,
+      `https://kriptees-backend-ays7.onrender.com/api/v1/admin/user/${id}`, userData,
 
       config
     );
@@ -335,7 +335,7 @@ export const deleteUser = (id) => async (dispatch) => {
     const config = {
       headers: { "Content-Type": "application/json", Authorization: `${token}` }
     };
-    const { data } = await axios.delete(`https://kriptees-backend.onrender.com/api/v1/admin/user/${id}`, config);
+    const { data } = await axios.delete(`https://kriptees-backend-ays7.onrender.com/api/v1/admin/user/${id}`, config);
     dispatch({ type: DELETE_USER_SUCCESS, payload: data })
 
   } catch (error) {

@@ -35,7 +35,7 @@ export const createOrder = (order) => async (dispatch) => {
 
     };
 
-    const { data } = await axios.post("https://kriptees-backend.onrender.com/api/v1/order/new", order, config);
+    const { data } = await axios.post("https://kriptees-backend-ays7.onrender.com/api/v1/order/new", order, config);
 
 
     dispatch({ type: CREATE_ORDER_SUCCESS, payload: data });
@@ -56,7 +56,7 @@ export const myOrders = () => async (dispatch) => {
       }
     };
 
-    const { data } = await axios.get("https://kriptees-backend.onrender.com/api/v1/orders/myOrders", config);
+    const { data } = await axios.get("https://kriptees-backend-ays7.onrender.com/api/v1/orders/myOrders", config);
    // console.log("My Orders Data:", data); 
 
 
@@ -84,7 +84,7 @@ export const getOrderDetails = (id) => async (dispatch) => {
     };
 
 
-    const { data } = await axios.get(`https://kriptees-backend.onrender.com/api/v1/order/${id}`, config);
+    const { data } = await axios.get(`https://kriptees-backend-ays7.onrender.com/api/v1/order/${id}`, config);
 
 
     dispatch({ type: ORDER_DETAILS_SUCCESS, payload: data.order });
@@ -105,7 +105,7 @@ export const getAllOrders = () => async (dispatch) => {
       }
     };
 
-    const { data } = await axios.get(`https://kriptees-backend.onrender.com/api/v1/admin/orders`, config);
+    const { data } = await axios.get(`https://kriptees-backend-ays7.onrender.com/api/v1/admin/orders`, config);
 
 
     dispatch({ type: ALL_ORDERS_SUCCESS, payload: data.orders });
@@ -124,7 +124,7 @@ export const trackOrder = (orderId) => async (dispatch) => {
       headers: { "Content-Type": "application/json", Authorization: `${token}` }
     };
 
-    const { data } = await axios.get(`https://kriptees-backend.onrender.com/api/v1/order/track/${orderId}`, config);
+    const { data } = await axios.get(`https://kriptees-backend-ays7.onrender.com/api/v1/order/track/${orderId}`, config);
     console.log("Tracking Data:", data); // Add this line for debugging
 
     dispatch({ type: TRACK_ORDER_SUCCESS, payload: data });
@@ -149,7 +149,7 @@ export const deleteOrder = (id) => async (dispatch) => {
       }
     };
 
-    const { data } = await axios.delete(`https://kriptees-backend.onrender.com/api/v1/admin/order/${id}`, config);
+    const { data } = await axios.delete(`https://kriptees-backend-ays7.onrender.com/api/v1/admin/order/${id}`, config);
 
 
     dispatch({ type: DELETE_ORDER_SUCCESS, payload: data.success });
@@ -170,7 +170,7 @@ export const updateOrder = (id, productData) => async (dispatch) => {
 
     };
     const { data } = await axios.put(
-      `https://kriptees-backend.onrender.com/api/v1/admin/order/${id}`,
+      `https://kriptees-backend-ays7.onrender.com/api/v1/admin/order/${id}`,
 
       productData,
       config

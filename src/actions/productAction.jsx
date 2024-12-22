@@ -45,11 +45,11 @@ export const getProduct = (
         type: ALL_PRODUCT_REQUEST,
       });
 
-      let link = `https://kriptees-backend.onrender.com/api/v1/product?keyword=${keyword}&page=${currentPage}&price[gte]=${price[0]}&price[lte]=${price[1]}&ratings[gte]=${ratings}`;
+      let link = `https://kriptees-backend-ays7.onrender.com/api/v1/product?keyword=${keyword}&page=${currentPage}&price[gte]=${price[0]}&price[lte]=${price[1]}&ratings[gte]=${ratings}`;
 
       // when category selected by user then using another link
       if (category) {
-        link = `https://kriptees-backend.onrender.com/api/v1/product?keyword=${keyword}&page=${currentPage}&price[gte]=${price[0]}&price[lte]=${price[1]}&ratings[gte]=${ratings}&category=${category}`;
+        link = `https://kriptees-backend-ays7.onrender.com/api/v1/product?keyword=${keyword}&page=${currentPage}&price[gte]=${price[0]}&price[lte]=${price[1]}&ratings[gte]=${ratings}&category=${category}`;
 
       }
       const { data } = await axios.get(link);
@@ -75,7 +75,7 @@ export const getProductDetails = (id) => {
         type: PRODUCT_DETAILS_REQUEST,
       });
 
-      const { data } = await axios.get(`https://kriptees-backend.onrender.com/api/v1/product/${id}`);
+      const { data } = await axios.get(`https://kriptees-backend-ays7.onrender.com/api/v1/product/${id}`);
 
 
       dispatch({
@@ -104,7 +104,7 @@ export const newReview = (reviewData) => async (dispatch) => {
       }
     };
 
-    const { data } = await axios.put(`https://kriptees-backend.onrender.com/api/v1/review/new`, reviewData, config);
+    const { data } = await axios.put(`https://kriptees-backend-ays7.onrender.com/api/v1/review/new`, reviewData, config);
 
 
     dispatch({ type: NEW_REVIEW_SUCCESS, payload: data.success });
@@ -126,7 +126,7 @@ export const getAdminProducts = () => async (dispatch) => {
       }
     };
 
-    const { data } = await axios.get("https://kriptees-backend.onrender.com/api/v1/admin/products", config);
+    const { data } = await axios.get("https://kriptees-backend-ays7.onrender.com/api/v1/admin/products", config);
 
 
     dispatch({ type: ADMIN_PRODUCT_SUCCESS, payload: data.products });
@@ -153,7 +153,7 @@ export function createProduct(productData) {
       };
 
       const { data } = await axios.post(
-        `https://kriptees-backend.onrender.com/api/v1/admin/product/new`,
+        `https://kriptees-backend-ays7.onrender.com/api/v1/admin/product/new`,
 
         productData,
         config
@@ -187,7 +187,7 @@ export function deleteProduct(id) {
         }
       };
 
-      const { data } = await axios.delete(`https://kriptees-backend.onrender.com/api/v1/admin/product/${id}`, config);
+      const { data } = await axios.delete(`https://kriptees-backend-ays7.onrender.com/api/v1/admin/product/${id}`, config);
 
 
       dispatch({ type: DELETE_PRODUCT_SUCCESS, payload: data.success });
@@ -212,7 +212,7 @@ export const updateProduct = (id, productData) => async (dispatch) => {
     };
 
     const { data } = await axios.put(
-      `https://kriptees-backend.onrender.com/api/v1/admin/product/${id}`,
+      `https://kriptees-backend-ays7.onrender.com/api/v1/admin/product/${id}`,
 
       productData,
       config
@@ -236,7 +236,7 @@ export const getAllreviews = (productId) => async (dispatch) => {
   try {
     dispatch({ type: ALL_REVIEW_REQUEST })
 
-    const { data } = await axios.get(`https://kriptees-backend.onrender.com/api/v1/reviews?id=${productId}`);
+    const { data } = await axios.get(`https://kriptees-backend-ays7.onrender.com/api/v1/reviews?id=${productId}`);
 
     dispatch({ type: ALL_REVIEW_SUCCESS, payload: data.reviews })
   } catch (error) {
@@ -251,7 +251,7 @@ export const deleteProductReview = (reviewId, productId) => async (dispatch) => 
     dispatch({ type: DELETE_REVIEW_REQUEST })
 
     const { data } = await axios.delete(
-      `https://kriptees-backend.onrender.com/api/v1/product/reviews/delete?id=${reviewId}&productId=${productId}`
+      `https://kriptees-backend-ays7.onrender.com/api/v1/product/reviews/delete?id=${reviewId}&productId=${productId}`
 
     );
 
