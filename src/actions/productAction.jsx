@@ -34,7 +34,7 @@ import {
 export const getProduct = (
   keyword = "",
   currentPage = 1,
-  price = [0, 100000],
+  price = [0, 25000],
   category,
   ratings = 0
 ) => {
@@ -57,6 +57,8 @@ export const getProduct = (
       dispatch({
         type: ALL_PRODUCT_SUCCESS,
         payload: data,
+        totalProducts: data.totalProducts,
+        filterdProductCount : data.filterdProductCount,
       });
     } catch (error) {
       dispatch({

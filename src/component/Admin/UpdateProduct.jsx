@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from 'react-toastify';
 import MetaData from "../Layouts/MetaData/MetaData";
@@ -11,18 +11,14 @@ import {
 } from "../../actions/productAction";
 import { UPDATE_PRODUCT_RESET } from "../../constants/productsConstants";
 import { useNavigate, useParams } from "react-router-dom";
+
 function UpdateProduct() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  // const alert = useAlert();
-
-  // const classes = useStyles;
   const { id } = useParams();
   const productId = id;
-  // const productId = 1;
 
   const { error, product } = useSelector((state) => state.productDetails);
-
   const { loading, error: updateError, isUpdated } = useSelector(
     (state) => state.deleteUpdateProduct
   );
@@ -36,11 +32,13 @@ function UpdateProduct() {
   const [info, setInfo] = useState('');
   const [imageUrl, setImageUrl] = useState('');
   const [imageUrls, setImageUrls] = useState([]);
+  const [size, setSize] = useState('');
+  const [color, setColor] = useState('');
+  const [tags, setTags] = useState([]);
+  const [tagInput, setTagInput] = useState('');
 
-  const [toggle, setToggle] = useState(false);
-  const categories = [
-    "Clothing",
-  ];
+  const categories = ["Clothing", "T-shirt", "Hoodie"];
+
   const handleCategoryChange = (e) => {
     setCategory(e.target.value);
     setIsCategory(true);
@@ -52,29 +50,30 @@ function UpdateProduct() {
 
   const handleUpload = () => {
     if (imageUrl.trim() !== '') {
-      setImageUrls([...imageUrls, imageUrl]);
+      setImageUrls([...imageUrls, { url: imageUrl }]);
       setImageUrl('');
     }
   };
 
-
   const clear = () => {
-    setImageUrls('')
-  }
+    setImageUrls('');
+  };
 
   useEffect(() => {
     if (product && product._id !== productId) {
       dispatch(getProductDetails(productId));
     } else {
-      console.log(product);
       setName(product.name);
       setDescription(product.description);
       setPrice(product.price);
-      setCategory("Clothing");
-      setIsCategory(true)
+      setCategory(product.category || "Clothing");
+      setIsCategory(true);
       setInfo(product.info);
       setStock(product.Stock);
-      setImageUrls(product.images);
+      setImageUrls(product.images || []);
+      setSize(product.size || '');
+      setColor(product.color || '');
+      setTags(product.tags || []);
     }
 
     if (error) {
@@ -94,7 +93,6 @@ function UpdateProduct() {
     }
   }, [
     dispatch,
-    // alert,
     error,
     navigate,
     isUpdated,
@@ -112,6 +110,9 @@ function UpdateProduct() {
     myForm.set("category", category);
     myForm.set("Stock", Stock);
     myForm.set("info", info);
+    myForm.set("size", size);
+    myForm.set("color", color);
+    tags.forEach((tag) => myForm.append("tags", tag));
     imageUrls.forEach((currImg) => {
       myForm.append("images", currImg.url);
     });
@@ -119,163 +120,185 @@ function UpdateProduct() {
     dispatch(updateProduct(productId, myForm));
   };
 
-
-  // togle handler =>
-  const toggleHandler = () => {
-    console.log("toggle");
-    setToggle(!toggle);
-  };
-  console.log(imageUrls)
-
   return (
     <>
       {loading ? (
         <Loader />
       ) : (
         <>
-          <>
-            <MetaData title="Update Product" />
-            <div className="flex">
-              <div
-              >
-                <Sidebar />
-              </div>
-              <div className=" flex  w-full justify-center bg-slate-300">
-                <div
+          <MetaData title="Update Product" />
+          <div className="flex">
+            <Sidebar />
+            <div className="flex w-full justify-center bg-gray-100 min-h-screen">
+              <div className="flex flex-col items-center bg-white shadow-lg rounded-lg p-8 m-4 w-full max-w-3xl">
+                <h2 className="text-2xl font-bold text-gray-700 mb-6">Update Product</h2>
+                <form
+                  className="w-full space-y-4"
+                  encType="multipart/form-data"
+                  onSubmit={createProductSubmitHandler}
                 >
-                  <div
-                    className="flex flex-col items-center bg-white m-4 p-8 rounded-md"
-                    encType="multipart/form-data"
-                  >
-                    <div
-                      className=" text-xl font-semibold m-4"
-                    >
-                      Update Product
-                    </div>
-                    <div>Product Name:</div>
+                  <div>
+                    <label className="block text-gray-700 mb-2">Product Name</label>
                     <input
+                      type="text"
+                      className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
                       placeholder="Product Name"
-                      required
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                     />
+                  </div>
 
-                    <div>Price:</div>
+                  <div>
+                    <label className="block text-gray-700 mb-2">Price</label>
                     <input
+                      type="number"
+                      className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
                       placeholder="Price"
                       value={price}
-                      required
                       onChange={(e) => setPrice(e.target.value)}
                     />
+                  </div>
 
-                    <div>Stock</div>
+                  <div>
+                    <label className="block text-gray-700 mb-2">Stock</label>
                     <input
+                      type="number"
+                      className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
                       placeholder="Stock"
                       value={Stock}
-                      required
                       onChange={(e) => setStock(e.target.value)}
                     />
-
-                    <div>Product Info</div>
+                  </div>
+                  <div>
+                    <label className="block text-gray-700 mb-2">Size</label>
                     <input
-                      label="Product Info"
-                      value={info}
-                      className=" w-96"
-                      required
-                      onChange={(e) => setInfo(e.target.value)}
+                      type="text"
+                      className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+                      id="size"
+                      value={size}
+                      onChange={(e) => setSize(e.target.value)}
                     />
-
-                    <div >
-                      {!isCategory && (
-                        <div
-                        >
-                          Choose Category
-                        </div>
-                      )}
-                      <div >
-                        <select
-                          value={category}
-                          onChange={handleCategoryChange}
-                        >
-                          {!category && (
-                            <option value="">
-                              <em>Choose Category</em>
-                            </option>
-                          )}
-                          {categories.map((cate) => (
-                            <option key={cate} value={cate}>
-                              {cate}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                    </div>
-
-                    <div>Product Description</div>
+                  </div>
+                  <div>
+                    <label className="block text-gray-700 mb-2">Color</label>
+                    <input
+                      type="text"
+                      className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+                      id="color"
+                      value={color}
+                      onChange={(e) => setColor(e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-gray-700 mb-2">Description</label>
                     <textarea
-                      placeholder="Product Description"
+                      className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+                      placeholder="Description"
                       value={description}
-                      className=" w-96 h-96 m-4"
                       onChange={(e) => setDescription(e.target.value)}
                     />
+                  </div>
 
-                    <div className=" flex flex-col">
-                      <div className=" text-center" >Moddify Image URL:</div>
-
-
-                      {imageUrls &&
-                        imageUrls.map((url, index) => (
-                          <div>
-                            < input
-                              placeholder="Enter image URL"
-                              value={url.url}
-                              onChange={(e) => {
-                                const updatedImageUrl = imageUrls.map((item, i) =>
-                                  i === index ? { ...item, url: e.target.value } : item
-                                );
-                                setImageUrls(updatedImageUrl);
-                              }
-                              }
-                            />
-                            < div className=" text-center" >Image Id :{index}</div>
-                          </div>
-                        ))}
-                    </div>
-
-                    < button
-                      className=" px-2 py-1 bg-blue-400 m-2 rounded-md text-white font-semibold shadow-sm hover:bg-blue-500"
-                      onClick={handleUpload}
-                    >Set URL</ button>
-
-                    <div className=" w-96">
-                      {imageUrls &&
-                        imageUrls.map((url, index) => (
-                          < img
-                            key={index}
-                            src={url.url}
-                            alt="Product Preview"
-                          />
-                        ))}
-                    </div>
-
-
-                    <div
-                      className=" p-4 bg-green-400 m-2 rounded-md text-white font-semibold shadow-sm disabled:bg-gray-40 hover:bg-green-500"
-
-                      onClick={createProductSubmitHandler}
-                      disabled={loading ? true : false}
+                  <div>
+                    <label className="block text-gray-700 mb-2">Category</label>
+                    <select
+                      className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+                      value={category}
+                      onChange={handleCategoryChange}
                     >
-                      Update
+                      {categories.map((cate) => (
+                        <option key={cate} value={cate}>
+                          {cate}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-gray-700 mb-2">Tags</label>
+                    <div className="flex items-center space-x-2">
+                      <input
+                        type="text"
+                        className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+                        placeholder="Enter a tag"
+                        value={tagInput}
+                        onChange={(e) => setTagInput(e.target.value)}
+                      />
+                      <button
+                        type="button"
+                        className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
+                        onClick={() => {
+                          if (tagInput.trim() !== "") {
+                            setTags([...tags, tagInput.trim()]);
+                            setTagInput("");
+                          }
+                        }}
+                      >
+                        Add
+                      </button>
+                    </div>
+                    <div className="flex flex-wrap mt-2 space-x-2">
+                      {tags.map((tag, index) => (
+                        <span
+                          key={index}
+                          className="bg-gray-200 text-gray-700 px-3 py-1 rounded-full flex items-center space-x-2"
+                        >
+                          {tag}
+                          <button
+                            type="button"
+                            className="text-red-500 hover:text-red-700"
+                            onClick={() => setTags(tags.filter((_, i) => i !== index))}
+                          >
+                            &times;
+                          </button>
+                        </span>
+                      ))}
                     </div>
                   </div>
-                </div>
+
+                  <div>
+                    <label className="block text-gray-700 mb-2">Image URLs</label>
+                    <div className="space-y-2">
+                      {imageUrls.map((url, index) => (
+                        <div key={index} className="flex items-center space-x-2">
+                          <input
+                            type="text"
+                            className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+                            value={url.url}
+                            onChange={(e) => {
+                              const updatedImageUrl = imageUrls.map((item, i) =>
+                                i === index ? { ...item, url: e.target.value } : item
+                              );
+                              setImageUrls(updatedImageUrl);
+                            }}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                    <button
+                      type="button"
+                      className="mt-2 bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
+                      onClick={handleUpload}
+                    >
+                      Add Image URL
+                    </button>
+                  </div>
+
+                  <button
+                    type="submit"
+                    className="w-full bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600"
+                    disabled={loading}
+                  >
+                    Update Product
+                  </button>
+                </form>
               </div>
             </div>
-          </>
+          </div>
         </>
-      )
-      }
+      )}
     </>
   );
 }
+
 export default UpdateProduct;
