@@ -44,7 +44,7 @@ import {
 
 const initialState = {
   loading: false,
-  isAuthenticated: false,
+  isAuthenticated: localStorage.getItem('token') ? true : false, // Add this check
   user: {},
   error: null,
 };

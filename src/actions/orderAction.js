@@ -125,7 +125,6 @@ export const trackOrder = (orderId) => async (dispatch) => {
     };
 
     const { data } = await axios.get(`https://kriptees-backend-ays7.onrender.com/api/v1/order/track/${orderId}`, config);
-    console.log("Tracking Data:", data); // Add this line for debugging
 
     dispatch({ type: TRACK_ORDER_SUCCESS, payload: data });
   } catch (error) {

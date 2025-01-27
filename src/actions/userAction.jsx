@@ -108,21 +108,23 @@ export function signUp(signupData) {
 export const load_UserProfile = () => async (dispatch) => {
   try {
     dispatch({ type: LOAD_USER_REQUEST });
+    
+    const token = localStorage.getItem('token');
+    const config = {
+      headers: { 
+        Authorization: `${token}`
+      }
+    };
 
-    // Check if user data is available in session storage
+    // Try getting from session storage first
     const userData = sessionStorage.getItem("user");
-    if (userData !== "undefined" && userData && userData !== undefined) {
-      // Parse the user data from JSON format stored in session storage
+    if (userData && userData !== "undefined") {
       const user = JSON.parse(userData);
       dispatch({ type: LOAD_USER_SUCCESS, payload: user });
     } else {
-      // If user data is not available in session storage, make a backend API call
-      const { data } = await axios.get("https://kriptees-backend-ays7.onrender.com/api/v1/profile");
-
-
+      // If not in session storage, make API call
+      const { data } = await axios.get("https://kriptees-backend-ays7.onrender.com/api/v1/profile", config);
       dispatch({ type: LOAD_USER_SUCCESS, payload: data.user });
-
-      // Save the user data to session storage for future use
       sessionStorage.setItem("user", JSON.stringify(data.user));
     }
   } catch (error) {

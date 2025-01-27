@@ -1,15 +1,13 @@
 import { load } from "@cashfreepayments/cashfree-js";
 import axios from "axios";
-import { map } from "highcharts";
 import { useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { displayMoney } from "../DisplayMoney/DisplayMoney";
-import { generateDiscountedPrice } from "../DisplayMoney/DisplayMoney";
 import { useDispatch } from "react-redux";
 import { createOrder } from "../../actions/orderAction";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
+
 function PaymentComponent() {
   const navigate = useNavigate();
   const [paymentMethod, setPaymentMethod] = useState(null);
@@ -17,23 +15,25 @@ function PaymentComponent() {
   const [showPayButton, setShowPayButton] = useState(false);
   const dispatch = useDispatch();
 
-  const { shippingInfo, cartItems } = useSelector((state) => state.cart);
+  const { shippingInfo, cartItems} = useSelector((state) => state.cart);
+  
+  console.log("cartItems:", cartItems);
 
   const subTotal = cartItems.reduce((acc, currItem) => {
+    console.log("acc:", acc, "currItem:", currItem);
     return acc + currItem.quantity * currItem.price;
   }, 0);
 
   const totalFinalPrice = subTotal;
-  let totalPrice = cartItems.reduce(
-    (acc, item) => acc + item.price * item.quantity,
-    0
-  );
 
-  function generateOrderId() {
+  let orderCounter = 0;
+
+function generateOrderId() {
     const currentDate = new Date();
     const orderDateTimeSeconds = Math.floor(currentDate.getTime() / 1000);
-    return `order_${orderDateTimeSeconds}`;
-  }
+    orderCounter = (orderCounter + 1) % 1000; // Increment counter, reset after 999
+    return `order_${orderDateTimeSeconds}_${orderCounter}`;
+}
 
   const createOrderInDatabase = async (order) => {
     const token = localStorage.getItem("token");
@@ -44,11 +44,7 @@ function PaymentComponent() {
       },
     };
     try {
-      await axios.post(
-        `https://kriptees-backend-ays7.onrender.com/api/v1/order/new`,
-        order,
-        config
-      );
+      await axios.post(`https://kriptees-backend-ays7.onrender.com/api/v1/order/new`, order, config);
       console.log("Order created in database");
     } catch (error) {
       console.error("Error creating order in database:", error);
@@ -69,7 +65,7 @@ function PaymentComponent() {
       shippingInfo,
       orderItems: cartItems,
       itemsPrice: subTotal,
-      shippingPrice: 0,
+      shippingPrice: 90,
       totalPrice: totalFinalPrice,
       paymentInfo: {
         id: "pending",
@@ -92,40 +88,42 @@ function PaymentComponent() {
       };
       const { data } = await axios.post(
         `https://kriptees-backend-ays7.onrender.com/api/v1/payment/createOrder`,
-        order,
+        {
+          ...order,
+          order_meta: {
+            return_url: `https://kriptees.com/success?orderId=${encodeURIComponent(order.ID)}`,
+            notify_url: "https://www.cashfree.com/devstudio/preview/pg/webhooks/24210234",
+            payment_methods: "cc,dc,upi",
+          },
+        },
         config
       );
-      console.log(data);
+      console.log("Order created successfully:", data);
 
       let checkoutOptions = {
         paymentSessionId: data.payment_session_id,
         redirectTarget: "_self",
       };
 
+      console.log("Starting Cashfree checkout...");
       await cashfree.checkout(checkoutOptions).then(async (result) => {
+        console.log("Cashfree checkout result:", result);
+
         if (result.error) {
-          console.log(result.error);
+          console.log("Payment failed:", result.error);
           toast.error("Payment Failed!");
+          return;
         }
-        if (result.paymentDetails) {
-          console.log(result.paymentDetails);
-          toast.success("Payment Successful!");
-          
-          // Update order with payment info
-          order.paymentInfo = {
-            id: result.paymentDetails.orderId,
-            status: "success",
-          };
-          
-          // Update order in database and Redux
-          await createOrderInDatabase(order);
-          dispatch(createOrder(order));
-          navigate("/success");
-        }
-        if (result.redirect) {
-          console.log("Payment will be redirected");
-          toast("Payment will be redirected");
-        }
+
+        // if (result) {
+        //   // Navigate to OrderSuccess page with orderId
+        //   console.log("Order ID being passed:", data.order_id);
+        //   navigate("/success", {
+        //     state: {
+        //       orderId: data.order_id,
+        //     },
+        //   });
+        // }
       });
     } catch (error) {
       console.error("Payment error:", error);
@@ -136,6 +134,7 @@ function PaymentComponent() {
   const handleSelectionChange = (e) => {
     const selectedPaymentMethod = e.target.value;
     setPaymentMethod(selectedPaymentMethod);
+    localStorage.setItem("paymentMethod", selectedPaymentMethod);
     if (selectedPaymentMethod === "COD") {
       setShowConfirmation(true);
       setShowPayButton(false);
@@ -156,7 +155,7 @@ function PaymentComponent() {
 
     order.ID = generateOrderId();
     order.paymentInfo = {
-      id: "CashOnDelivery",
+      id: "Cash On Delivery",
       status: "COD",
     };
 
@@ -164,7 +163,12 @@ function PaymentComponent() {
       await createOrderInDatabase(order);
       dispatch(createOrder(order));
       toast.success("Order Confirmed!");
-      navigate("/success");
+      navigate(`/success?orderId=${encodeURIComponent(order.ID)}`, {
+        state: {
+          orderId: order.ID,
+          paymentMethod : paymentMethod,
+        },
+      });
     } catch (error) {
       console.error("Error creating COD order:", error);
       toast.error("Failed to create order!");
@@ -280,14 +284,9 @@ function PaymentComponent() {
                         Original price
                       </dt>
                       <dd className="text-base font-medium text-gray-900 dark:text-white">
-                        {totalPrice}
+                        {totalFinalPrice}
                       </dd>
                     </dl>
-                    {/* 
-                    <dl className="flex items-center justify-between gap-4">
-                      <dt className="text-gray-500 dark:text-gray-400">Savings</dt>
-                      <dd className="text-base font-medium text-green-500">-{totalDiscount}</dd>
-                    </dl> */}
 
                     <dl className="flex items-center justify-between gap-4">
                       <dt className="text-gray-500 dark:text-gray-400">
@@ -304,7 +303,7 @@ function PaymentComponent() {
                       Total
                     </dt>
                     <dd className="text-lg font-bold text-gray-900 dark:text-white">
-                      ₹{totalPrice + 90}
+                      ₹{totalFinalPrice + 90}
                     </dd>
                   </dl>
                 </div>
@@ -386,11 +385,35 @@ function PaymentComponent() {
 
                 {showPayButton && (
                   <div className="mt-4">
+                  <div className="flex items-start sm:items-center">
+                  <input
+                    required
+                    id="terms-checkbox-2"
+                    type="checkbox"
+                    value=""
+                    className="h-4 w-4 mb-2 rounded border-gray-300 bg-gray-100 text-primary-600 focus:ring-2 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-primary-600"
+                  />
+                  <label
+                    for="terms-checkbox-2"
+                    className="ms-2 mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                    {" "}
+                    I agree with the{" "}
+                    <a
+                      href="#"
+                      title=""
+                      className="text-primary-700 underline hover:no-underline dark:text-primary-500">
+                      Terms and Conditions
+                    </a>{" "}
+                    of use of the Kriptees
+                  </label>
+                </div>
+                  <div className="mt-4">
                     <button
                       onClick={doPayment}
                       className="mt-4 flex w-full items-center justify-center rounded-lg bg-primary-700  px-5 py-2.5 text-sm font-medium text-white hover:bg-primary-800 focus:outline-none focus:ring-4 focus:ring-primary-300  dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 sm:mt-0">
                       Pay Now
                     </button>
+                  </div>
                   </div>
                 )}
               </div>
@@ -401,4 +424,5 @@ function PaymentComponent() {
     </div>
   );
 }
+
 export default PaymentComponent;

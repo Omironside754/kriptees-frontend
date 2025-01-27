@@ -28,6 +28,10 @@ const MyOrder = () => {
     setTrackedOrderId(orderId);
   };
 
+  const viewOrderDetailsHandler = (orderId) => {
+    navigate(`/orders/${orderId}`);
+  };
+
   useEffect(() => {
     if (isAuthenticated === false) {
       navigate("/login");
@@ -38,8 +42,10 @@ const MyOrder = () => {
       dispatch(clearErrors());
     }
 
-    dispatch(myOrders());
-  }, [dispatch, error, isAuthenticated, navigate]);
+    if (isAuthenticated) {
+      dispatch(myOrders());
+    }
+  }, [dispatch, error, isAuthenticated, navigate]); // Added navigate to dependency array
 
   useEffect(() => {
     if (trackingError) {
@@ -47,8 +53,6 @@ const MyOrder = () => {
       dispatch(clearErrors());
     }
   }, [dispatch, trackingError]);
-
-  //console.log("Orders:", orders); // Add this line for debugging
 
   return (
     <>
@@ -60,8 +64,8 @@ const MyOrder = () => {
           <h1 className="text-2xl font-bold mb-6">My Orders</h1>
           {orders && orders.length > 0 ? (
             orders.map((item) => (
-              <section className="bg-white shadow-md rounded-lg p-6 mb-8" key={item._id}>
-                <h2 className="text-xl font-semibold mb-4">Order ID: {item._id}</h2>
+              <section className="bg-white shadow-md rounded-lg p-6 mb-8" key={item.ID}>
+                <h2 className="text-xl font-semibold mb-4">Order ID: {item.ID}</h2>
                 <div className="grid md:grid-cols-2 gap-8">
                   <div>
                     <h3 className="text-lg font-medium mb-2">Order Items</h3>
@@ -81,11 +85,12 @@ const MyOrder = () => {
                     <p><strong>Status:</strong> {item.orderStatus}</p>
                     <p><strong>Total Amount:</strong> ₹{item.totalPrice}</p>
                     <p><strong>Placed On:</strong> {new Date(item.createdAt).toLocaleDateString()}</p>
+                    
                     <button
-                      onClick={() => trackOrderHandler(item._id)}
-                      className="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors"
+                      onClick={() => viewOrderDetailsHandler(item.ID)}
+                      className="mt-4 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition-colors ml-4"
                     >
-                      Track Order
+                      View Details
                     </button>
                   </div>
                 </div>

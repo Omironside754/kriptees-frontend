@@ -1,5 +1,8 @@
-import Login from "./component/User/Login";
+import React, { useEffect } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { load_UserProfile } from "./actions/userAction";
+import Login from "./component/User/Login";
 import SignUp from "./component/User/SignUp";
 import Home from "./component/Home/Home";
 import Header from "./component/Layouts/Header1.jsx/Header";
@@ -12,25 +15,20 @@ import TermsAndConditions from "./Terms&Condtions/TermsandConditions";
 import PrivacyPolicy from "./Terms&Condtions/Privacy";
 import ReturnPolicyPage from "./Terms&Condtions/Return";
 import ProfilePage from "./component/User/Profile";
-import "./App.css";
 import Cart from "./component/Cart/Cart";
 import ProductDetails from "./component/Product/ProductDetails";
 import Products from "./component/Product/Products";
-// import Route from "./component/Route/Route";
-import { useEffect, useState } from "react";
-// const LazyPayment = lazy(() => import("./component/Cart/Payment"));
+import PrivateRoute from "./component/Route/PrivateRoute";
 import Dashboard from "./component/Admin/Dashboard";
 import ProductList from "./component/Admin/ProductList";
 import OrderList from "./component/Admin/OrderList";
 import UserList from "./component/Admin/UserList";
 import UpdateProduct from "./component/Admin/UpdateProduct";
 import ProcessOrder from "./component/Admin/ProcessOrder";
-// import UpdateProduct from "./component/Admin/UpdateProduct";
 import NewProduct from "./component/Admin/NewProduct";
 import ProductReviews from "./component/Admin/ProductReviews";
+import OrderDetails from "./component/order/OrderDetails";
 import MyOrder from "./component/order/MyOrder";
-import { useDispatch } from "react-redux";
-import { load_UserProfile } from "./actions/userAction";
 import ConfirmOrder from "./component/Cart/ConfirmOrder";
 import Shipping from "./component/Cart/Shipping";
 import OrderSuccess from "./component/Cart/OrderSuccess";
@@ -38,21 +36,29 @@ import Activator from "./component/Route/Activator";
 import PaymentComponent from "./component/Cart/Payment";
 import UpdateUser from "./component/Admin/UpdateUser";
 import { ToastContainer } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css';
-import Scroll from "./scroll"
+import "react-toastify/dist/ReactToastify.css";
+import Scroll from "./scroll";
 import CustomOrderPage from "./component/Home/CustomOrder";
-// const LazyProductReviews = lazy(() =>
-//   import("./component/Admin/ProductReviews")
-// );
 
 function App() {
-
   const dispatch = useDispatch();
 
   useEffect(() => {
     dispatch(load_UserProfile());
-  }, []);
+  }, [dispatch]);
+  const { isAuthenticated, user ,loading } = useSelector((state) => state.userData);
+  if (loading) {
+    return <div>Loading...</div>; // Or your loader component
+  }
 
+  // Helper function to wrap routes that need authentication
+  const wrapPrivateRoute = (element, redirect = "", isAdmin = false) => {
+    return (
+      <PrivateRoute redirect={redirect} isAdmin={isAdmin}>
+        {element}
+      </PrivateRoute>
+    );
+  };
 
   return (
     <div className="App">
@@ -67,23 +73,22 @@ function App() {
         draggable
         pauseOnHover
         theme="light"
-      // transition:Slide
       />
       <BrowserRouter>
         <Scroll />
         <Routes>
+          {/* Public Routes */}
           <Route
-            exact path="/"
+            path="/"
             element={
               <>
                 <Header />
                 <Home />
                 <Footer />
               </>
-            } />
-
+            }
+          />
           <Route
-            exact
             path="/login"
             element={
               <>
@@ -93,9 +98,7 @@ function App() {
               </>
             }
           />
-
           <Route
-            exact
             path="/signup"
             element={
               <>
@@ -105,73 +108,7 @@ function App() {
               </>
             }
           />
-
           <Route
-            exact
-            path="/cart"
-            element={
-              <>
-                {<Header />}
-                <Cart />
-                {/* <Services /> */}
-                {<Footer />}
-              </>
-            }
-          />
-
-
-          <Route
-            exact
-            path="/product/:id"
-            element={
-              <>
-                {<Header />}
-                <ProductDetails />
-                {/* <Services /> */}
-                {<Footer />}
-              </>
-            }
-          />
-          <Route
-            exact
-            path="/customise"
-            element={
-              <>
-                {<Header />}
-                {<CustomOrderPage/>}
-                {/* <Services /> */}
-                {<Footer />}
-              </>
-            }
-          />
-
-          <Route
-            exact
-            path="/products"
-            element={
-              <>
-                {<Header />}
-                <Products />
-                {/* <Services /> */}
-                {<Footer />}
-              </>
-            }
-          />
-
-          <Route
-            path="/products/:keyword"
-            element={
-              <>
-                <Header />
-                <Products />
-                {/* <Services /> */}
-                <Footer />
-              </>
-            }
-          />
-
-          <Route
-            exact
             path="/AboutUs"
             element={
               <>
@@ -181,9 +118,7 @@ function App() {
               </>
             }
           />
-
           <Route
-            exact
             path="/ContactUs"
             element={
               <>
@@ -193,248 +128,260 @@ function App() {
               </>
             }
           />
-
           <Route
-            exact
             path="/PrivacyPolicy"
             element={
               <>
-                {<Header />}
+                <Header />
                 <PrivacyPolicy />
-                {<Footer />}
+                <Footer />
               </>
             }
           />
-
           <Route
-            exact
             path="/RefundandCancellation"
             element={
               <>
                 <Header />
                 <ReturnPolicyPage />
-                {/* <Services /> */}
                 <Footer />
               </>
             }
           />
           <Route
-            exact
             path="/ShipandDelivery"
             element={
               <>
-                {<Header />}
+                <Header />
                 <ShippingPolicy />
-                {<Footer />}
+                <Footer />
               </>
             }
           />
-
-
           <Route
-            exact
             path="/TermsandConditions"
             element={
               <>
-                {<Header />}
+                <Header />
                 <TermsAndConditions />
-                {<Footer />}
-              </>
-            }
-          />
-
-
-
-          <Route
-            exact
-            path="/orders"
-            element={
-              <>
-                {<Header />}
-                <MyOrder />
-                {/* <PrivateRoute exact path="/orders" component={MyOrder} /> */}
-                {/* <Services /> */}
-                {<Footer />}
-              </>
-            }
-          />
-
-          <Route
-            exact
-            path="/shipping"
-            element={
-              <>
-                {<Header />}
-                <Shipping />
-                {/* <PrivateRoute exact path="/shipping" component={Shipping} /> */}
-                {/* <Services /> */}
-                {<Footer />}
-              </>
-            }
-          />
-
-          <Route
-            exact
-            path="/order/confirm"
-            element={
-              <>
-                {<Header />}
-                <ConfirmOrder />
-                {/* <PrivateRoute
-                  exact
-                  path="/order/confirm"
-                  component={ConfirmOrder}
-                /> */}
-                {/* <Services /> */}
-                {<Footer />}
+                <Footer />
               </>
             }
           />
           <Route
-            exact
-            path="/success"
-            element={
-              <>
-                {<Header />}
-                <OrderSuccess />
-                {/* <PrivateRoute exact path="/success" component={OrderSuccess} /> */}
-                {/* <Services /> */}
-                {<Footer />}
-              </>
-            }
-          />
-
-
-
-
-          {/* private Routes */}
-
-          <Route
-
-            exact
-            path="/admin/dashboard"
-            element={<>
-
-
-              <Activator />
-
-              <Dashboard />
-
-            </>
-
-            }
-          />
-
-          <Route
-
-            exact
-            path="/admin/products"
-            element={
-              <>
-                <Activator />
-                <ProductList />
-
-              </>
-            }
-          />
-          <Route
-
-            exact
-            path="/admin/product/:id"
-            element={<UpdateProduct />}
-          />
-          <Route
-
-            exact
-            path="/admin/reviews"
-            element={<ProductReviews />}
-          />
-          <Route
-
-            exact
-            path="/admin/orders"
-            element={<OrderList />}
-          />
-          <Route
-
-            exact
-            path="/admin/order/:id"
-            element={<ProcessOrder />}
-          />
-          <Route
-            exact
-            path="/orders"
+            path="/product/:id"
             element={
               <>
                 <Header />
-                <Activator />
-                <MyOrder />
-                <Services />
+                <ProductDetails />
+                <Footer />
+              </>
+            }
+          />
+          <Route
+            path="/customise"
+            element={
+              <>
+                <Header />
+                <CustomOrderPage />
+                <Footer />
+              </>
+            }
+          />
+          <Route
+            path="/products"
+            element={
+              <>
+                <Header />
+                <Products />
+                <Footer />
+              </>
+            }
+          />
+          <Route
+            path="/products/:keyword"
+            element={
+              <>
+                <Header />
+                <Products />
                 <Footer />
               </>
             }
           />
 
+          {/* Protected User Routes */}
           <Route
+            path="/cart"
+            element={wrapPrivateRoute(
+              <>
+                <Header />
+                <Cart />
+                <Footer />
+              </>,
+              "/cart"
+            )}
+          />
+          <Route
+            path="/orders"
+            element={wrapPrivateRoute(
+              <>
+                <Header />
+                <MyOrder />
+                <Footer />
+              </>,
+              "/orders"
+            )}
+          />
+          <Route
+            path="/orders/:id"
+            element={wrapPrivateRoute(
+              <>
+                <Header />
+                <OrderDetails />
+                <Footer />
+              </>,
+              "/orders"
+            )}
+          />
+          <Route
+            path="/shipping"
+            element={wrapPrivateRoute(
+              <>
+                <Header />
+                <Shipping />
+                <Footer />
+              </>,
+              "/shipping"
+            )}
+          />
+          <Route
+            path="/order/confirm"
+            element={wrapPrivateRoute(
+              <>
+                <Header />
+                <ConfirmOrder />
+                <Footer />
+              </>,
+              "/order/confirm"
+            )}
+          />
+          <Route
+            path="/success"
+            element={wrapPrivateRoute(
+              <>
+                <Header />
+                <OrderSuccess />
+                <Footer />
+              </>,
+              "/success"
+            )}
+          />
+          <Route
+            path="/account"
+            element={wrapPrivateRoute(
+              <>
+                <Header />
+                <ProfilePage />
+                <Footer />
+              </>,
+              "/account"
+            )}
+          />
+          <Route
+            path="/process/payment"
+            element={wrapPrivateRoute(
+              <>
+                <Header />
+                <PaymentComponent />
+              </>,
+              "/process/payment"
+            )}
+          />
 
-            exact
+          {/* Admin Routes */}
+          <Route
+            path="/admin/dashboard"
+            element={wrapPrivateRoute(
+              <>
+                <Activator />
+                <Dashboard />
+              </>,
+              "/admin/dashboard",
+              true
+            )}
+          />
+          <Route
+            path="/admin/products"
+            element={wrapPrivateRoute(
+              <>
+                <Activator />
+                <ProductList />
+              </>,
+              "/admin/products",
+              true
+            )}
+          />
+          <Route
+            path="/admin/product/:id"
+            element={wrapPrivateRoute(
+              <UpdateProduct />,
+              "/admin/product",
+              true
+            )}
+          />
+          <Route
+            path="/admin/reviews"
+            element={wrapPrivateRoute(
+              <ProductReviews />,
+              "/admin/reviews",
+              true
+            )}
+          />
+          <Route
+            path="/admin/orders"
+            element={wrapPrivateRoute(
+              <OrderList />,
+              "/admin/orders",
+              true
+            )}
+          />
+          <Route
+            path="/admin/order/:id"
+            element={wrapPrivateRoute(
+              <ProcessOrder />,
+              "/admin/order",
+              true
+            )}
+          />
+          <Route
             path="/admin/new/product"
-            element={
+            element={wrapPrivateRoute(
               <>
                 <Activator />
                 <NewProduct />
-              </>
-            }
+              </>,
+              "/admin/new/product",
+              true
+            )}
           />
-
           <Route
-
-            exact
             path="/admin/users"
-            element={<UserList />}
+            element={wrapPrivateRoute(
+              <UserList />,
+              "/admin/users",
+              true
+            )}
           />
-
           <Route
-            exact
             path="/admin/user/:id"
-            element={
-              <>
-                <UpdateUser />
-              </>
-            }
+            element={wrapPrivateRoute(
+              <UpdateUser />,
+              "/admin/user",
+              true
+            )}
           />
-
-          <Route
-            exact
-            path="/account"
-            element={
-              <>
-                {<Header />}
-                {/* <Route exact path="/account" element={Profile} /> */}
-                <ProfilePage />
-                {/* <Services /> */}
-                {<Footer />}
-              </>
-            }
-          />
-
-          <Route exact path="/process/payment"
-            element={
-              <>
-
-                {<Header />}
-                <PaymentComponent />
-
-              </>
-            }
-          />
-          {/* <PrivateRoute exact path="/process/payment" component={Payment} /> */}
-
-
         </Routes>
-
       </BrowserRouter>
-
     </div>
   );
 }

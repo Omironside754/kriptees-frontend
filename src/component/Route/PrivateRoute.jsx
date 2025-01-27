@@ -1,33 +1,58 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import { Navigate, useLocation } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { redirect, Route } from "react-router-dom";
 import { load_UserProfile } from "../../actions/userAction";
-// import CricketBallLoader from "../Layouts/loader/Loader";
-function PrivateRoute({ isAdmin, component: Component, ...rest }) {
-  const {
-     loading,
-    isAuthenticated, user } = useSelector(
-      (state) => state.userData
-    );
+
+const PrivateRoute = ({ children, isAdmin = false }) => {
+  const location = useLocation();
   const dispatch = useDispatch();
+  const { isAuthenticated, user, loading } = useSelector((state) => state.userData);
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
 
   useEffect(() => {
-    dispatch(load_UserProfile());
-  }, [dispatch]);
+    const loadUser = async () => {
+      const token = localStorage.getItem("token");
+      const sessionUser = sessionStorage.getItem("user");
+      
+      if (token && (!user || !sessionUser)) {
+        await dispatch(load_UserProfile());
+      }
+      setIsInitialLoad(false);
+    };
 
+    loadUser();
+  }, [dispatch, user]);
 
-  // If the user data failed to load or the user is not authenticated, redirect to the login page
-  if (!isAuthenticated || !user) {
-    return redirect("/login");
+  // During initial load or redux loading, show loading state
+  if (isInitialLoad || loading) {
+    return <div>Loading...</div>;
   }
 
-  // If isAdmin is true and the user is not an admin, redirect to the login page
-  if (isAdmin && user.role !== "admin") {
-    return redirect("/login");
+  const token = localStorage.getItem("token");
+  const sessionUser = JSON.parse(sessionStorage.getItem("user") || "null");
+
+  // If no token, redirect to login
+  if (!token) {
+    return <Navigate to="/login" state={{ from: location.pathname }} replace />;
   }
 
-  // If the user is authenticated and isAdmin check is passed, render the specified component
-  return <Route {...rest} element={(props) => <Component {...props} />} />;
-}
+  // For admin routes
+  if (isAdmin) {
+    // Use session storage data as backup if Redux state is not available
+    const currentUser = user || sessionUser;
+    
+    // Only redirect if we explicitly confirm user is not admin
+    if (currentUser && currentUser.role !== "admin") {
+      return <Navigate to="/" />;
+    }
+    
+    // If we have the token but user data isn't loaded yet, show loading
+    if (!currentUser) {
+      return <div>Loading...</div>;
+    }
+  }
+
+  return children;
+};
 
 export default PrivateRoute;

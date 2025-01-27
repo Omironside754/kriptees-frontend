@@ -14,6 +14,7 @@ function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const navigate = useNavigate();
   const { isAuthenticated, user } = useSelector((state) => state.userData);
+  
   const [searchBarActive, setSearchBarActive] = useState(false);
   const [sideMenu, setSideMenu] = useState(false);
   const [searchValue, setSearchValue] = useState("");
