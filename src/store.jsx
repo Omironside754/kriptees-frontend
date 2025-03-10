@@ -1,5 +1,4 @@
 import { createStore, combineReducers, applyMiddleware } from "redux";
-// import thunk from "redux-thunk";
 import { thunk } from "redux-thunk";
 // import { composeWithDevTools } from "redux-devtools-extension";
 import {
@@ -29,6 +28,9 @@ import {
   orderTrackingReducer, // Add this line
 } from "./reducers/orderReducer";
 
+// Import the wishlistReducer
+import { wishlistReducer } from "./reducers/wishlistReducer";  // Add this import
+
 const rootReducer = combineReducers({
   products: productsReducer,
   productDetails: productDetailsReducer,
@@ -49,9 +51,10 @@ const rootReducer = combineReducers({
   deleteReview: deleteReviewReducer,
   getAllReview: getALLReviewReducer,
   orderTrack: orderTrackingReducer, // Add this line
+  wishlist: wishlistReducer,  // Add the wishlistReducer here
 });
 
-// get all Cart values from local storage and pass this initial state into store
+// Get cart and wishlist data from local storage
 let initialState = {
   cart: {
     cartItems: localStorage.getItem("cartItem")
@@ -61,8 +64,12 @@ let initialState = {
       ? JSON.parse(localStorage.getItem("shippingInfo"))
       : [],
   },
+  wishlist: {
+    wishlistItems: localStorage.getItem("wishlistItems")
+      ? JSON.parse(localStorage.getItem("wishlistItems"))
+      : [],  // Get wishlist items from localStorage
+  }
 };
-
 
 const middleware = [thunk];
 

@@ -78,3 +78,43 @@
     margin: 0 auto;
   }
 }
+
+/* The parent container that hides overflow */
+.marquee-container {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  /* white-space: nowrap;  // Not needed if we use flex for .marquee-content */
+}
+
+/* The content is twice as wide as the container for a seamless loop */
+.marquee-content {
+  display: flex;
+  width: 200%; /* Double the container width */
+  animation: marquee 10s linear infinite; /* Adjust 10s for speed */
+}
+
+/* Each half is 50% so text repeats seamlessly */
+.marquee-group {
+  width: 50%;
+  white-space: nowrap; /* Keep text in a single line */
+}
+
+/* Keyframes: move left from 0% to -50% */
+@keyframes marquee {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+/* In your CSS file or a Tailwind plugin */
+.text-outline {
+  color: black;
+  text-shadow:
+    -1px 0 black,
+    0 1px black,
+    1px 0 black,
+    0 -1px black;
+}

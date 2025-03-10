@@ -1,109 +1,213 @@
+import React, { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { clearErrors, getProduct } from "../../actions/productAction";
+import { toast } from "react-toastify";
 import MetaData from "../Layouts/MetaData/MetaData";
 import ProductCard from "./ProductCard";
-import { clearErrors, getProduct } from "../../actions/productAction";
-import { useSelector, useDispatch } from "react-redux";
-import FeaturedSlider from "./FeatureSlider";
 import "./Home.css";
-import { useEffect, useState } from "react";
-import { toast } from 'react-toastify';
-import img1 from '../../ecommerce images/1L.png';
-import img2 from '../../ecommerce images/2L.png';
-import img3 from '../../ecommerce images/3L.png';
-import img4 from '../../ecommerce images/4L.png';
-import img1P from '../../ecommerce images/1.png';
-import img2P from '../../ecommerce images/2.png';
-import img3P from '../../ecommerce images/3.png';
-import img4P from '../../ecommerce images/4.png';
-import image from '../../ecommerce images/img.png';
+
+import img from "../../ecommerce images/banner.png";
+import image from "../../ecommerce images/downimg.png";
+import midimage from "../../ecommerce images/midimg.png";
 
 function Home() {
-    const arr = [img1, img2, img3, img4];
-    const arrP = [img1P, img2P, img3P, img4P];
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { loading, error, products } = useSelector((state) => state.products);
 
-    const [i, setI] = useState(0);
-    const [img, setImg] = useState(arr[i]);
-    const [imgP, setImgP] = useState(arrP[i]);
+  // Fetch products on mount
+  useEffect(() => {
+    if (error) {
+      toast.error(error);
+      dispatch(clearErrors());
+    }
+    dispatch(getProduct());
+  }, [dispatch, error]);
 
-    useEffect(() => {
-        const interval = setInterval(() => {
-            setI((prevIndex) => (prevIndex === 3 ? 0 : prevIndex + 1));
-        }, 3000); // Change slide every 3 seconds
+  // Filter products for Top Picks (if any tag includes "new" or "arriv")
+  const topPicks = products.filter(
+    (p) =>
+      p.tags &&
+      p.tags.some((tag) => {
+        const lowerTag = tag.toLowerCase();
+        return lowerTag.includes("new") || lowerTag.includes("arriv");
+      })
+  );
 
-        return () => clearInterval(interval); // Clean up the interval on unmount
-    }, []);
+  // Filter by categories
+  const Tshirt = products.filter((p) => p.category === "T-shirt");
+  const hoodies = products.filter((p) => p.category === "Hoodie");
 
-    useEffect(() => {
-        setImg(arr[i]);
-        setImgP(arrP[i]);
-    }, [i]);
+  return (
+    <>
+      <MetaData title="Kriptees" />
+      <div className="Home_Page">
+        {/* 1) Top Banner */}
+        <div className="w-full">
+          <img src={img} alt="Banner" className="w-full h-auto" />
+        </div>
 
-    const dispatch = useDispatch();
-    const { loading, error, products } = useSelector((state) => state.products);
-
-    useEffect(() => {
-        if (error) {
-            toast.error(error);
-            dispatch(clearErrors());
-        }
-        dispatch(getProduct());
-    }, [dispatch, error]);
-
-    return (
-        <>
-            <MetaData title="Kriptees" />
-            <div className="Home_Page">
-                <div id="default-carousel" className="relative w-full py-2 mt-20 lg:mt-24" data-carousel="slide">
-                    <div className="relative h-80 md:h-96 lg:h-[500px] overflow-hidden rounded-lg">
-                        <div className="w-full h-full duration-700 ease-in-out transition-opacity transform lg:block hidden">
-                            <img src={img} className="absolute block w-full h-full object-cover" alt="Slide" />
-                        </div>
-                        <div className="w-full h-full duration-700 ease-in-out transition-opacity transform lg:hidden block">
-                            <img src={imgP} className="absolute block w-full h-full object-cover" alt="Slide" />
-                        </div>
-                    </div>
-                    <button onClick={() => setI(i === 0 ? 3 : i - 1)} type="button" className="absolute top-0 left-0 z-30 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none" data-carousel-prev>
-                        <span className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/30 dark:bg-gray-800/30 group-hover:bg-white/50 dark:group-hover:bg-gray-800/60 group-focus:ring-4 group-focus:ring-white dark:group-focus:ring-gray-800/70 group-focus:outline-none">
-                            <svg className="w-4 h-4 text-white dark:text-gray-800 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
-                                <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 1 1 5l4 4" />
-                            </svg>
-                            <span className="sr-only">Previous</span>
-                        </span>
-                    </button>
-                    <button onClick={() => setI(i === 3 ? 0 : i + 1)} type="button" className="absolute top-0 right-0 z-30 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none" data-carousel-next>
-                        <span className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/30 dark:bg-gray-800/30 group-hover:bg-white/50 dark:group-hover:bg-gray-800/60 group-focus:ring-4 group-focus:ring-white dark:group-focus:ring-gray-800/70 group-focus:outline-none">
-                            <svg className="w-4 h-4 text-white dark:text-gray-800 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
-                                <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 9 4-4-4-4" />
-                            </svg>
-                            <span className="sr-only">Next</span>
-                        </span>
-                    </button>
-                </div>
-                <div className="bg-[#11A3CA] py-6 text-center">
-                    <h2 className="text-white font-semibold text-xl sm:text-2xl mb-4">Find Your Vibe With Kriptees</h2>
-                    <div className="flex flex-col sm:flex-row justify-center p-5 space-y-2 sm:space-y-0 sm:space-x-4">
-                        <button className="bg-[#F5F5DC] px-4 py-2 rounded-md">Basics from 399Rs</button>
-                        <button className="bg-[#F5F5DC] px-4 py-2 rounded-md">Classic from 499Rs</button>
-                        <button className="bg-[#F5F5DC] px-4 py-2 rounded-md">Combos from 599Rs</button>
-                    </div>
-                </div>
-                <div className="hidden lg:block">
-                    <h2 className="text-center font-semibold text-2xl m-4">
-                        Trending Category
-                    </h2>
-                    {products && <FeaturedSlider products={products} />}
-                </div>
-                <h2 className="text-center font-semibold text-2xl m-8">Special Collection</h2>
-                <div className="mt-6 grid grid-cols-2 lg:gap-x-6 lg:gap-y-10 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
-                    {products && products.map((product) => (
-                        <ProductCard key={product._id} product={product} />
-                    ))}
-                </div>
-                <div className="bg-white py-2 flex flex-col items-center">
-                    <img src={image} alt="Promotional Banner" className="max-w-full h-auto" />
-                </div>
+        {/* 2) Scrolling Marquee */}
+        <div className="marquee-container bg-black text-white py-1 text-[1.2rem] uppercase tracking-widest">
+          <div className="marquee-content">
+            <div className="marquee-group px-4">
+              NEW ARRIVALS EVERY MONTH! &nbsp; NEW ARRIVALS EVERY MONTH! &nbsp;
+              NEW ARRIVALS EVERY MONTH! &nbsp; NEW ARRIVALS EVERY MONTH! &nbsp;
             </div>
-        </>
-    );
+            <div className="marquee-group px-4">
+              NEW ARRIVALS EVERY MONTH! &nbsp; NEW ARRIVALS EVERY MONTH! &nbsp;
+              NEW ARRIVALS EVERY MONTH! &nbsp; NEW ARRIVALS EVERY MONTH! &nbsp;
+            </div>
+          </div>
+        </div>
+
+        {/* === SECTION 1: Top Picks === */}
+        {topPicks.length > 0 && (
+          <>
+            <h2 className="text-6xl font-black uppercase tracking-widest m-8 px-10 py-4">
+              TOP PICKS
+            </h2>
+            <div className="mt-6 flex flex-wrap justify-center gap-8 max-w-full-xl mx-auto px-4">
+              {topPicks.slice(0, 8).map((product) => (
+                <ProductCard key={product._id} product={product} />
+              ))}
+            </div>
+            <div className="flex justify-center mt-8">
+              <button
+                onClick={() => navigate("/NewArrival")}
+                className="bg-white text-black px-6 py-3 uppercase font-bold tracking-widest border border-gray-950 rounded-lg hover:bg-gray-400 transition-colors"
+              >
+                View More
+              </button>
+            </div>
+          </>
+        )}
+        <div className="w-full mt-8">
+          <img src={midimage} alt="Banner" className="w-full h-auto" />
+        </div>
+        {/* === SECTION 2: T-Shirt (Only 4 Items) === */}
+        {Tshirt.length > 0 && (
+          <>
+            <h2 className="text-6xl font-black uppercase tracking-widest m-8 px-10 py-4">
+              T-SHIRT
+            </h2>
+            <div className="mt-6 flex flex-wrap justify-center gap-8 max-w-full-xl mx-auto px-4">
+              {Tshirt.slice(0, 4).map((product) => (
+                <ProductCard key={product._id} product={product} />
+              ))}
+            </div>
+
+            {/* Down Arrow Circle Button */}
+            <div className="flex justify-center mt-8">
+              <button
+                onClick={() => navigate("/Tshirt")}
+                className="p-2 rounded-full border border-black hover:bg-gray-300 transition-colors"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="w-8 h-8"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth={1}   
+                >
+                  {/* Arrow Down (bigger path) */}
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M4 8l8 8 8-8"
+                  />
+                </svg>
+              </button>
+            </div>
+
+          </>
+        )}
+
+        {/* === SECTION 3: Hoodies === */}
+        {hoodies.length > 0 && (
+          <>
+            <h2 className="text-6xl font-black uppercase tracking-widest m-8 px-10 py-4">
+              HOODIES
+            </h2>
+            <div className="mt-6 flex flex-wrap justify-center gap-8 max-w-full-xl mx-auto px-4">
+              {hoodies.map((product) => (
+                <ProductCard key={product._id} product={product} />
+              ))}
+            </div>
+            {/* Down Arrow Circle Button */}
+            <div className="flex justify-center mt-8">
+              <button
+                onClick={() => navigate("/Hoodies")}
+                className="p-2 rounded-full border border-black hover:bg-gray-300 transition-colors"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="w-8 h-8"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth={1}   
+                >
+                  {/* Arrow Down (bigger path) */}
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M4 8l8 8 8-8"
+                  />
+                </svg>
+              </button>
+            </div>
+          </>
+        )}
+
+        {/* Promotional Row */}
+        <div className="flex flex-col md:flex-row justify-center items-center gap-[20rem] tracking-widest text-center mt-8 px-4 py-6 border-y-2 border-slate-200">
+          {/* Column 1 */}
+          <div className="max-w-xs mx-4">
+            <h3 className="font-bold text-sm uppercase mb-1 underline underline-offset-4 py-2">
+              SHIPPING PAN INDIA
+            </h3>
+            <p className="text-xs text-gray-700">
+              MADE IN INDIA
+              <br />
+              DELIVERING PAN INDIA
+            </p>
+          </div>
+
+          {/* Column 2 */}
+          <div className="max-w-xs">
+            <h3 className="font-bold text-sm uppercase mb-1 underline underline-offset-4 py-2">
+              FREE RETURN AND EXCHANGE
+            </h3>
+            <p className="text-xs text-gray-700">
+              7 DAYS EASY RETURNS
+              <br />
+              NO QUESTIONS ASKED
+            </p>
+          </div>
+
+          {/* Column 3 */}
+          <div className="max-w-xs">
+            <h3 className="font-bold text-sm uppercase mb-1 underline underline-offset-4 py-2">
+              100% HOME GROWN BRAND
+            </h3>
+            <p className="text-xs text-gray-700">
+              PRODUCTS ARE 100%
+              <br />
+              MADE IN INDIA
+            </p>
+          </div>
+        </div>
+
+        {/* Another banner/image */}
+        <div className="w-full">
+          <img src={image} alt="Promotional Banner" className="w-full h-auto" />
+        </div>
+      </div>
+    </>
+  );
 }
 
 export default Home;

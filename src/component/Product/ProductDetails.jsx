@@ -1,27 +1,35 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import useActive from "../hook/useActive";
 import ReviewCard from "./ReviewCard";
 import { clearErrors, getProductDetails } from "../../actions/productAction";
 import MetaData from "../Layouts/MetaData/MetaData";
 import { addItemToCart } from "../../actions/cartAction";
 import CricketBallLoader from "../Layouts/loader/Loader";
 import { PRODUCT_DETAILS_RESET } from "../../constants/productsConstants";
-import { toast } from 'react-toastify';
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+import { addItemToWishlist } from "../../actions/wishlistAction"; // Import Wishlist Action
 
 const ProductDetails = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  // Track which thumbnail is active
   const [i, setI] = useState(0);
-  const [quantity, setQuantity] = useState(1);
+  // Track main preview image
   const [previewImg, setPreviewImg] = useState("");
-  const { handleActive, activeClass } = useActive(0);
+  // Product quantity and size
+  const [quantity, setQuantity] = useState(1);
   const [size, setSize] = useState("S");
+
+  // Redux states
   const { product, loading, error, success } = useSelector(
     (state) => state.productDetails
   );
 
+  // On mount or if id changes, fetch product details
   useEffect(() => {
     if (error) {
       toast.error(error);
@@ -31,47 +39,59 @@ const ProductDetails = () => {
       dispatch({ type: PRODUCT_DETAILS_RESET });
     }
     dispatch(getProductDetails(id));
-  }, [dispatch, error, success, id]);
+  }, [dispatch, id, error, success]);
 
+  // Once product is loaded, set the initial main image
   useEffect(() => {
-    if (product && product.images && product.images.length > 0) {
+    if (product?.images?.length > 0) {
       setPreviewImg(product.images[0].url);
-      handleActive(0);
+      setI(0);
     }
   }, [product]);
 
+  // Switch main image on thumbnail click
+  const handlePreviewImg = (index) => {
+    setPreviewImg(product.images[index].url);
+    setI(index);
+  };
+
+  // Increase/Decrease quantity
+  const increaseQuantityHandler = () => {
+    if (product.Stock && quantity >= product.Stock) return;
+    setQuantity((prev) => prev + 1);
+  };
+  const decreaseQuantityHandler = () => {
+    if (quantity > 1) setQuantity((prev) => prev - 1);
+  };
+
+  // Add item to cart
   const handleAddItem = () => {
     dispatch(addItemToCart(id, quantity, size));
     toast.success("Item Added To Cart");
   };
 
-  const handlePreviewImg = (images, index) => {
-    setPreviewImg(images[index].url);
-    handleActive(index);
-    setI(index); // Update the `i` state to track the selected image
+  // Add item to wishlist
+  const handleAddToWishlist = () => {
+    dispatch(addItemToWishlist(id));
+    toast.success("Item Added To Wishlist");
   };
 
-  const increaseQuantityHandler = () => {
-    if (product.Stock <= quantity) {
-      return;
-    }
-    setQuantity((prev) => prev + 1);
-  };
-
-  const decreaseQuantityHandler = () => {
-    if (quantity <= 1) {
-      return;
-    }
-    setQuantity((prev) => prev - 1);
-  };
-
+  // Convert product.description into bullet points
   const convertToPoints = (text) => {
-    if (text && typeof text === 'string') {
-      return text.split('. ').filter(sentence => sentence.trim().length > 0);
+    if (text && typeof text === "string") {
+      return text
+        .split(". ")
+        .map((sentence) => sentence.trim())
+        .filter((sentence) => sentence.length > 0);
     }
+    return [];
   };
 
   const points = convertToPoints(product.description);
+
+  const checkoutHandler = async () => {
+    navigate("/login?redirect=/shipping");
+  };
 
   return (
     <>
@@ -79,106 +99,158 @@ const ProductDetails = () => {
         <CricketBallLoader />
       ) : (
         <>
-          <MetaData title={product.name} />
-          <div className="bg-white mt-16 dark:bg-gray-800 py-16">
-            <div className="mx-auto px-6 lg:px-8">
-              <div className="flex flex-col md:flex-row -mx-4">
-
-
-                <div className="md:flex-1 px-4 flex">
-                  <div className="w-full md:w-3/4">
-                    <img src={previewImg} className="mb-4 rounded-lg w-full h-auto" alt="Product Main" />
-                  </div>
-                  <div className="w-full md:w-1/4 flex flex-col items-center md:items-start justify-start md:justify-center space-y-4 md:space-y-2 md:ml-4">
-                    {product.images && product.images.map((img, index) => (
-                      <img
-                        key={index}
-                        src={img.url}
-                        className={`cursor-pointer rounded-lg w-20 h-20 object-cover ${index === i ? 'border-2 border-blue-500' : ''}`}
-                        alt={`Product Preview ${index + 1}`}
-                        onClick={() => handlePreviewImg(product.images, index)}
-                      />
-                    ))}
-                  </div>
-                </div>
-
-
-                <div className="md:flex-1 px-4">
-                  <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-2">{product.name}</h2>
-                  <p className="text-gray-600 dark:text-gray-300 text-sm mb-4">{product.info}</p>
-                  <div className="flex mb-4">
-                    <div className="mr-4">
-                      <span className="font-bold text-gray-700 dark:text-gray-300">Price:</span>
-                      <span className="text-gray-600 dark:text-gray-300">₹{product.price}</span>
-                    </div>
-                    <div>
-                      <span className="font-bold text-gray-700 dark:text-gray-300">Availability:</span>
-                      <span className="text-gray-600 dark:text-gray-300">In Stock</span>
-                    </div>
-                  </div>
-                  <div className="flex align-middle items-center gap-4 mb-4">
-                    <div className="flex">
-                      <div className="flex items-center">
-                        {[1, 2, 3, 4, 5].map(ratingValue => (
+          <MetaData title={product.name || "Product Details"} />
+          <div className="bg-white dark:bg-gray-800 py-10 mt-16">
+            <div className="max-w-7xl mx-auto px-4 py-4">
+              {/* Two-column layout: left for images, right for details */}
+              <div className="flex flex-col md:flex-row gap-6">
+                {/* LEFT COLUMN: Main image + vertical thumbnails */}
+                <div className="md:w-1/2">
+                  <div className="flex flex-col-reverse md:flex-row gap-4">
+                    {/* Thumbnails (vertical column of smaller images on desktop) */}
+                    <div className="flex md:flex-col gap-3 mt-4 md:mt-0 md:w-1/5 overflow-x-auto md:overflow-x-visible">
+                      {product.images &&
+                        product.images.map((img, index) => (
                           <div
-                            key={ratingValue}
-                            className={`text-2xl ${product.ratings >= ratingValue ? 'text-yellow-500' : 'text-gray-300'}`}
+                            key={index}
+                            className={`cursor-pointer min-w-20 md:w-full ${
+                              index === i ? "ring-2 ring-black" : ""
+                            }`}
+                            onClick={() => handlePreviewImg(index)}
                           >
-                            &#9733;
+                            <img
+                              src={img.url}
+                              alt={`Product Preview ${index}`}
+                              className="w-20 h-20 md:w-full md:h-36 object-cover"
+                            />
                           </div>
                         ))}
-                      </div>
                     </div>
-                    <div>
-                      <div>
-                        <strong> Total Reviews: </strong>
-                        {product.numOfReviews}
-                      </div>
+
+                    {/* Main Image */}
+                    <div className="md:w-4/5">
+                      <img
+                        src={previewImg}
+                        alt="Product Main"
+                        className="w-full h-auto object-cover"
+                      />
                     </div>
                   </div>
+                </div>
+                {/* RIGHT COLUMN: Product Info */}
+                <div className="md:w-1/2 md:pl-8">
+                  <div className="mb-2">
+                    <h2 className="text-2xl font-bold uppercase tracking-wider">
+                      {product.name || "KRIPTEES X JUJUTSU"}
+                    </h2>
+                    <p className="text-gray-600 text-sm mb-2">
+                      {product.info || "Black Anime Printed Oversized Shirt"}
+                    </p>
+                  </div>
+
+                  {/* Price */}
                   <div className="mb-4">
-                    <span className="font-bold text-gray-700 dark:text-gray-300">Select Size:</span>
-                    <div className="flex items-center mt-2">
-                      {["S", "M", "L", "XL", "XXL"].map(sizeOption => (
+                    <span className="text-xl font-bold">
+                      Rs.{product.price || 799}
+                    </span>
+                    {product.oldPrice && (
+                      <span className="text-gray-500 line-through ml-2">
+                        Rs.{product.oldPrice}
+                      </span>
+                    )}
+                  </div>
+
+                  {/* SIZE */}
+                  <div className="mb-6">
+                    <h3 className="font-bold mb-2 uppercase text-sm">Size</h3>
+                    <div className="flex space-x-2">
+                      {["S", "M", "L", "XL"].map((option) => (
                         <button
-                          key={sizeOption}
-                          onClick={() => setSize(sizeOption)}
-                          className={`bg-gray-300 dark:bg-gray-700 text-gray-700 dark:text-white py-2 px-4 rounded-full font-bold mr-2 hover:bg-gray-400 dark:hover:bg-gray-600 ${size === sizeOption ? 'border-2 border-blue-500' : ''}`}
+                          key={option}
+                          onClick={() => setSize(option)}
+                          className={`w-12 h-12 flex items-center justify-center border ${
+                            size === option
+                              ? "bg-black text-white border-black"
+                              : "bg-white text-black border-gray-300 hover:border-black"
+                          }`}
                         >
-                          {sizeOption}
+                          {option}
                         </button>
                       ))}
                     </div>
-                    <div className="mt-4 font-bold text-gray-700">Selected Size: {size}</div>
                   </div>
-                  <div className="flex -mx-2 mb-4 mt-6">
-                    <div className="w-1/2 px-2">
+
+                  {/* QUANTITY */}
+                  <div className="mb-6">
+                    <h3 className="font-bold mb-2 uppercase text-sm">Quantity</h3>
+                    <div className="flex border border-gray-300 w-32">
                       <button
-                        onClick={handleAddItem}
-                        disabled={product.Stock <= 0}
-                        className="w-full bg-gray-900 disabled:bg-gray-500 dark:bg-gray-600 text-white py-2 px-4 rounded-full font-bold hover:bg-gray-800 dark:hover:bg-gray-700"
+                        onClick={decreaseQuantityHandler}
+                        className="w-10 h-10 flex items-center justify-center border-r"
                       >
-                        Add to Cart
+                        -
+                      </button>
+                      <div className="flex-1 h-10 flex items-center justify-center">
+                        {quantity}
+                      </div>
+                      <button
+                        onClick={increaseQuantityHandler}
+                        className="w-10 h-10 flex items-center justify-center border-l"
+                      >
+                        +
                       </button>
                     </div>
                   </div>
-                  <div>
-                    <span className="font-bold text-gray-700 dark:text-gray-300">Product Description:</span>
-                    <p className="text-gray-600 dark:text-gray-300 text-sm mt-2">
-                      <ul className="list-disc list-inside space-y-2">
-                        {points && points.map((point, index) => (
-                          <li key={index}>{point}</li>
+
+                  {/* Buttons */}
+                  <div className="flex gap-4 mb-6">
+                    <button
+                      onClick={handleAddItem}
+                      className="bg-white border border-gray-300 text-black py-3 uppercase tracking-wider hover:border-black w-full"
+                    >
+                      Add to Cart
+                    </button>
+                    <button
+                      onClick={handleAddToWishlist}
+                      className="bg-white border border-gray-300 text-black py-3 uppercase tracking-wider hover:border-black w-full"
+                    >
+                      Add to Wishlist
+                    </button>
+                  </div>
+
+                  <button
+                    onClick={checkoutHandler}
+                    className="bg-black text-white py-3 uppercase tracking-wider w-full"
+                  >
+                    Buy Now
+                  </button>
+
+                  {/* About Your Choice */}
+                  <div className="border-t border-b py-6">
+                    <h3 className="font-bold mb-4 uppercase text-lg">
+                      About Your Choice
+                    </h3>
+                    {points.length > 0 ? (
+                      <ul className="space-y-2">
+                        {points.map((point, idx) => (
+                          <li key={idx}>· {point}</li>
                         ))}
                       </ul>
-                    </p>
+                    ) : (
+                      <p className="text-sm text-gray-600">
+                        No description available.
+                      </p>
+                    )}
                   </div>
                 </div>
               </div>
             </div>
           </div>
-          <div>
+
+          {/* Review Section */}
+          {/* <div>
             <ReviewCard product={product} />
-          </div>
+          </div> */}
         </>
       )}
     </>

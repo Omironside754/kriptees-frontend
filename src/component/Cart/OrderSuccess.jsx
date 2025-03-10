@@ -130,7 +130,7 @@ function OrderSuccess() {
           <div className="py-10 text-center">
             <button
               onClick={() => navigate("/orders")}
-              className="px-12 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-3"
+              className="px-12 bg-black hover:bg-gray-500 text-white font-semibold py-3"
             >
               View Orders
             </button>
