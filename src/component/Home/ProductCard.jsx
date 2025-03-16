@@ -6,15 +6,15 @@ const ProductCard = ({ product }) => {
   // Handle case when product is undefined
   if (!product) {
     return (
-      <div className="border border-gray-600 rounded-md p-4 w-80 hover:shadow-lg">
-        <div className="w-full h-80 bg-gray-200 flex items-center justify-center rounded-md">
-          <p className="text-gray-500">Image not available</p>
+      <div className="border border-gray-600 rounded-md p-2 md:p-4 w-full hover:shadow-lg">
+        <div className="w-full aspect-square bg-gray-200 flex items-center justify-center rounded-md">
+          <p className="text-gray-500 text-xs md:text-sm">Image not available</p>
         </div>
-        <h2 className="mt-3 text-gray-800 text-base tracking-widest line-clamp-1">
+        <h2 className="mt-2 md:mt-3 text-gray-800 text-sm md:text-base tracking-widest line-clamp-1">
           Product Unavailable
         </h2>
         <div className="mt-1 flex items-center space-x-2">
-          <span className="text-sm font-bold tracking-widest text-gray-900">
+          <span className="text-xs md:text-sm font-bold tracking-widest text-gray-900">
             ₹0.00
           </span>
         </div>
@@ -39,10 +39,10 @@ const ProductCard = ({ product }) => {
   const oldPrice = displayMoney(product.price);
 
   return (
-    <div className="border border-gray-600 rounded-md p-4 w-80 hover:shadow-lg">
+    <div className="border border-gray-300 md:border-gray-600 rounded-md p-2 md:p-4 w-full hover:shadow-lg">
       {/* Product Image */}
       <Link to={`/product/${productId}`}>
-        <div className="w-full h-80 bg-gray-100 overflow-hidden rounded-md">
+        <div className="w-full aspect-square bg-gray-100 overflow-hidden rounded-md">
           {imageUrl ? (
             <img
               src={imageUrl}
@@ -55,24 +55,24 @@ const ProductCard = ({ product }) => {
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center bg-gray-200">
-              <p className="text-gray-500">Image not available</p>
+              <p className="text-gray-500 text-xs md:text-sm">Image not available</p>
             </div>
           )}
         </div>
       </Link>
 
       {/* Product Name */}
-      <h2 className="mt-3 text-gray-800 text-base tracking-widest line-clamp-1">
+      <h2 className="mt-2 md:mt-3 text-gray-800 text-sm md:text-base tracking-widest line-clamp-1">
         {product.name}
       </h2>
 
       {/* Pricing */}
       <div className="mt-1 flex items-center space-x-2">
-        <span className="text-sm font-bold tracking-widest text-gray-900">
-          {discountPrice}
-        </span>
-        <span className="text-sm text-red-500 tracking-widest line-through">
+        <span className="text-xs md:text-sm font-bold tracking-widest text-gray-900">
           {oldPrice}
+        </span>
+        <span className="text-xs md:text-sm text-red-500 tracking-widest line-through">
+          {discountPrice}
         </span>
       </div>
     </div>

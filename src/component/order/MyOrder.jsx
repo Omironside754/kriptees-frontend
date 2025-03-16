@@ -16,7 +16,7 @@ const MyOrder = () => {
   const { trackingDetails, loading: trackingLoading, error: trackingError } =
     useSelector((state) => state.orderTrack);
 
-    console.log("trackingDetails", trackingDetails);
+  console.log("trackingDetails", trackingDetails);
 
   const [trackedOrderId, setTrackedOrderId] = useState(null);
 
@@ -37,6 +37,14 @@ const MyOrder = () => {
   const viewOrderDetailsHandler = (orderId) => {
     navigate(`/orders/${orderId}`);
   };
+
+  // Custom hook to detect mobile view
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -67,19 +75,21 @@ const MyOrder = () => {
         <div className="container mx-auto mt-20 px-4 py-8 font-[Poppins]">
           {/* PAGE HEADING */}
           <h1 className="text-[32px] font-black uppercase tracking-wide pb-2">
-           Orders
+            Orders
           </h1>
 
           {orders && orders.length > 0 ? (
             orders.map((order) => {
-              // For the screenshot-style UI, let's assume we display only the first item
-              // If your orders have multiple items, adapt accordingly
+              // For simplicity, display only the first item
               const mainItem = order.orderItems[0];
 
               return (
                 <div
-                  className="border border-gray-300 rounded-lg p-4 mb-6 flex justify-between items-center"
                   key={order.ID}
+                  onClick={isMobile ? () => viewOrderDetailsHandler(order.ID) : undefined}
+                  className={`border border-gray-300 rounded-lg p-4 mb-6 flex justify-between items-center ${
+                    isMobile ? "cursor-pointer" : ""
+                  }`}
                 >
                   {/* LEFT SIDE: IMAGE + ORDER INFO */}
                   <div className="flex items-center gap-4">
@@ -95,8 +105,8 @@ const MyOrder = () => {
                       <h2 className="text-xl font-black uppercase tracking-wide mb-1">
                         {mainItem?.name || "KRIPTEES X BERSERK"}
                       </h2>
-                      {/* Order ID */}
-                      <p className="text-sm text-gray-500 mb-1">
+                      {/* Order ID - hidden on mobile */}
+                      <p className="hidden md:block text-sm text-gray-500 mb-1">
                         Order ID: {order.ID}
                       </p>
                       {/* Size */}
@@ -120,10 +130,11 @@ const MyOrder = () => {
 
                   {/* RIGHT SIDE: TOTAL + BUTTONS */}
                   <div className="flex flex-col items-end">
-                    <span className="text-lg font-black uppercase mb-2">
+                    {/* Total Price - hidden on mobile */}
+                    <span className="hidden md:block text-lg font-black uppercase mb-2">
                       Total: Rs.{order.totalPrice}
                     </span>
-                    <div className="flex gap-2">
+                    <div className="hidden md:flex gap-2">
                       {/* VIEW DETAILS BUTTON */}
                       <button
                         onClick={() => viewOrderDetailsHandler(order.ID)}
@@ -131,13 +142,6 @@ const MyOrder = () => {
                       >
                         View Details
                       </button>
-                      {/* TRACK ORDER BUTTON */}
-                      {/* <button
-                        onClick={() => trackOrderHandler(order._id)}
-                        className="border border-black px-4 py-2 uppercase text-sm font-medium hover:bg-black hover:text-white transition-colors"
-                      >
-                        Track Order
-                      </button> */}
                     </div>
 
                     {/* TRACKING INFO */}

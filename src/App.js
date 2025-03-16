@@ -22,6 +22,7 @@ import Products from "./component/Product/Products";
 import Tshirt from "./component/Product/Tshirt";
 import Hoodies from "./component/Product/Hoodies";
 import NewArrival from "./component/Product/NewArrival";
+import Sweatshirts from "./component/Product/Sweatshirts";
 import PrivateRoute from "./component/Route/PrivateRoute";
 import PageTransition from "./component/Route/PageTransition";
 import Dashboard from "./component/Admin/Dashboard";
@@ -205,6 +206,16 @@ function App() {
               <PageTransition>
                 <Header />
                 <NewArrival />
+                <Footer />
+              </PageTransition>
+            }
+          />
+          <Route
+            path="/Sweatshirts"
+            element={
+              <PageTransition>
+                <Header />
+                <Sweatshirts />
                 <Footer />
               </PageTransition>
             }

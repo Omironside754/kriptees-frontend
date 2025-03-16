@@ -22,7 +22,7 @@ function Hoodies() {
   return (
     <>
       <MetaData title="Kriptees" />
-      <div className="Home_Page">
+      <div className="Home_Page pt-20">
         {/* Top Banner */}
         <div className="w-full">
           <img src={img} alt="Banner" className="w-full h-auto" />
@@ -40,7 +40,7 @@ function Hoodies() {
 
         {/* Hoodies Products */}
         {products.length > 0 && (
-          <div className="py-8 flex flex-wrap justify-center gap-8 max-w-full-xl mx-auto px-4">
+          <div className="md:mt-6 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-8 p-3 md:px-8">
             {products.map((product) => (
               <ProductCard key={product._id} product={product} />
             ))}

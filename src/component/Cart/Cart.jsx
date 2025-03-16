@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { addItemToCart, removeItemFromCart } from "../../actions/cartAction";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const Cart = ({ isOpen, onClose }) => {
   const navigate = useNavigate();
@@ -18,7 +18,7 @@ const Cart = ({ isOpen, onClose }) => {
   // Handle animation states
   useEffect(() => {
     if (isOpen) {
-      // Small delay before starting animation for better effect
+      // Small delay before starting animation for a smoother effect
       setTimeout(() => {
         setAnimationClass("translate-x-0");
       }, 50);
@@ -29,17 +29,13 @@ const Cart = ({ isOpen, onClose }) => {
 
   const increaseQuantity = (id, quantity, stock) => {
     const newQty = quantity + 1;
-    if (stock <= quantity) {
-      return;
-    }
+    if (stock <= quantity) return;
     dispatch(addItemToCart(id, newQty));
   };
 
   const decreaseQuantity = (id, quantity) => {
     const newQty = quantity - 1;
-    if (1 >= quantity) {
-      return;
-    }
+    if (1 >= quantity) return;
     dispatch(addItemToCart(id, newQty));
   };
 
@@ -53,16 +49,16 @@ const Cart = ({ isOpen, onClose }) => {
   };
 
   const goBack = () => {
-    onClose(); // Use onClose instead of navigate(-1)
+    onClose();
   };
 
   // Navigate to product detail
   const navigateToProduct = (productId) => {
-    onClose(); // Close the cart before navigation
+    onClose();
     navigate(`/product/${productId}`);
   };
 
-  // Make background fixed
+  // Make background fixed when cart is open
   useEffect(() => {
     if (isOpen) {
       const originalStyle = window.getComputedStyle(document.body).overflow;
@@ -73,27 +69,34 @@ const Cart = ({ isOpen, onClose }) => {
     }
   }, [isOpen]);
 
-  // Don't render if not open
+  // Don't render the drawer at all if cart isn't open
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex justify-end">
-      {/* Semi-transparent overlay */}
-      <div 
+      {/* Semi-transparent overlay (click to close) */}
+      <div
         className="absolute inset-0 bg-black bg-opacity-30 p-4 transition-opacity duration-500"
         style={{ opacity: animationClass === "translate-x-0" ? 1 : 0 }}
         onClick={onClose}
       />
+
+      {/* Cart Drawer */}
       <div
-        className={`relative z-10 transition-transform duration-1000 ease-in-out transform ${animationClass}`}
+        className={`
+          relative z-10
+          transition-transform duration-1000 ease-in-out
+          transform ${animationClass}
+          h-full
+          w-full sm:w-3/4 md:w-1/3
+        `}
         style={{
           backgroundColor: "rgba(255, 255, 255, 0.95)",
-          width: "33.33%", // Take 1/3rd of the screen width
-          height: "100%",
-          boxShadow: "-4px 0 15px rgba(0,0,0,0.1)"
+          boxShadow: "-4px 0 15px rgba(0,0,0,0.1)",
         }}
       >
         <div className="bg-gray-200 p-9 shadow-inner h-full overflow-y-auto">
+          {/* Close Button (top-right) */}
           <button
             onClick={goBack}
             className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
@@ -121,7 +124,7 @@ const Cart = ({ isOpen, onClose }) => {
                   key={item.productId}
                   className="flex items-start mb-6 pb-6 border-b border-gray-200"
                 >
-                  <div 
+                  <div
                     className="w-20 h-24 flex-shrink-0 mr-4 relative cursor-pointer"
                     onClick={() => navigateToProduct(item.productId)}
                   >
@@ -132,7 +135,7 @@ const Cart = ({ isOpen, onClose }) => {
                     />
                     <button
                       onClick={(e) => {
-                        e.stopPropagation(); // Prevent navigation when deleting
+                        e.stopPropagation(); // Prevent navigation on delete
                         deleteCartItems(item.productId);
                       }}
                       className="absolute top-0 left-0 text-red-500 bg-white rounded-full p-1"
@@ -155,8 +158,8 @@ const Cart = ({ isOpen, onClose }) => {
                     </button>
                   </div>
                   <div className="flex-grow">
-                    <h3 
-                      className="font-bold text-xl uppercase cursor-pointer hover:text-gray-700" 
+                    <h3
+                      className="font-bold text-xl uppercase cursor-pointer hover:text-gray-700"
                       onClick={() => navigateToProduct(item.productId)}
                     >
                       {item.name}
@@ -168,7 +171,7 @@ const Cart = ({ isOpen, onClose }) => {
                         <div className="border rounded inline-flex">
                           <button
                             onClick={(e) => {
-                              e.stopPropagation(); // Prevent navigation
+                              e.stopPropagation();
                               decreaseQuantity(item.productId, item.quantity);
                             }}
                             className="px-2 py-1 border-r"
@@ -178,7 +181,7 @@ const Cart = ({ isOpen, onClose }) => {
                           <span className="px-3 py-1">{item.quantity}</span>
                           <button
                             onClick={(e) => {
-                              e.stopPropagation(); // Prevent navigation
+                              e.stopPropagation();
                               increaseQuantity(item.productId, item.quantity, item.stock);
                             }}
                             className="px-2 py-1 border-l"
@@ -210,7 +213,7 @@ const Cart = ({ isOpen, onClose }) => {
               <p className="text-xl font-semibold mb-4">Your cart is empty</p>
               <button
                 onClick={() => {
-                  onClose(); // Close the cart first
+                  onClose();
                   navigate("/");
                 }}
                 className="bg-black text-white px-6 py-2 rounded"

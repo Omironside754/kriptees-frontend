@@ -1,22 +1,20 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams, useNavigate } from "react-router-dom";
-import { clearErrors, trackOrder } from "../../actions/orderAction";
+import { myOrders, clearErrors, trackOrder } from "../../actions/orderAction";
 import MetaData from "../Layouts/MetaData/MetaData";
 import CricketBallLoader from "../Layouts/loader/Loader";
 import { toast } from "react-toastify";
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { addItemToCart } from "../../actions/cartAction";
 
 const OrderDetails = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { id } = useParams();
 
-  const {
-    trackingDetails,
-    loading: trackingLoading,
-    error: trackingError,
-  } = useSelector((state) => state.orderTrack);
+  const { trackingDetails, loading: trackingLoading, error: trackingError } =
+    useSelector((state) => state.orderTrack);
+  const { user, isAuthenticated } = useSelector((state) => state.userData);
 
   useEffect(() => {
     if (trackingError) {
@@ -26,17 +24,22 @@ const OrderDetails = () => {
     dispatch(trackOrder(id));
   }, [dispatch, id, trackingError]);
 
+  // Custom hook to detect mobile view (screen width less than 768px)
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   return (
     <>
       <MetaData title="Order Details" />
       {trackingLoading ? (
         <CricketBallLoader />
       ) : (
-        <div className="container mx-auto px-4 py-8 font-[Poppins] text-gray-800 mt-16">
+        <div className="container mx-auto mt-16 px-4 py-8 font-[Poppins] text-gray-800">
           {/* Page Heading */}
-          <h1 className="text-3xl font-black uppercase tracking-wide mb-8 border-b border-gray-300 pb-2">
-            Order Details
-          </h1>
 
           {trackingDetails && trackingDetails.orderDetails ? (
             <div className="max-w-6xl mx-auto">
@@ -49,17 +52,15 @@ const OrderDetails = () => {
                   <div className="space-y-1">
                     <p className="text-sm">
                       <span className="font-semibold uppercase">Order ID:</span>{" "}
-                      {trackingDetails.orderDetails.ID}
+                      <span className="hidden md:inline">{trackingDetails.orderDetails.ID}</span>
                     </p>
                     <p className="text-sm">
                       <span className="font-semibold uppercase">Order Date:</span>{" "}
-                      {new Date(
-                        trackingDetails.orderDetails.createdAt
-                      ).toLocaleDateString()}
+                      {new Date(trackingDetails.orderDetails.createdAt).toLocaleDateString()}
                     </p>
                     <p className="text-sm">
                       <span className="font-semibold uppercase">Order Total:</span>{" "}
-                      ₹{trackingDetails.orderDetails.totalPrice}
+                      <span className="hidden md:inline">₹{trackingDetails.orderDetails.totalPrice}</span>
                     </p>
                   </div>
                   <div className="space-y-1">
@@ -95,14 +96,15 @@ const OrderDetails = () => {
                 {trackingDetails.orderDetails.orderItems.map((product) => (
                   <div
                     key={product.productId}
-                    className="flex flex-col md:flex-row items-start gap-4 mb-6 border-b border-gray-200 pb-6 last:border-b-0 last:pb-0"
+                    className="flex flex-row items-start gap-4 mb-6 border-b border-gray-200 pb-6 last:border-b-0 last:pb-0"
+                    onClick={isMobile ? () => navigate(`/product/${product.productId}`) : undefined}
                   >
                     <Link to={`/product/${product.productId}`}>
-                    <img
-                      src={product.image}
-                      alt={product.name}
-                      className="w-24 h-24 object-cover rounded border border-gray-300"
-                    />
+                      <img
+                        src={product.image}
+                        alt={product.name}
+                        className="w-24 h-24 object-cover rounded border border-gray-300"
+                      />
                     </Link>
                     <div className="flex-1 space-y-1">
                       <p className="font-semibold">{product.name}</p>
@@ -113,9 +115,6 @@ const OrderDetails = () => {
                         Price: ₹{product.price}
                       </p>
                       <p className="text-sm text-gray-600">Seller: Kriptees</p>
-                      {/* <p className="text-sm text-gray-600">
-                        Return Eligible: Yes (Until 17 Jan 2025)
-                      </p> */}
                     </div>
                   </div>
                 ))}
@@ -162,8 +161,7 @@ const OrderDetails = () => {
                       </>
                     ) : (
                       <p className="text-sm">
-                        No tracking information available at this time. Please check back
-                        later.
+                        No tracking information available at this time. Please check back later.
                       </p>
                     )}
                   </div>

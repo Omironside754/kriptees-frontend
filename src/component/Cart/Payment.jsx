@@ -2,12 +2,13 @@ import React, { useState } from "react";
 import { load } from "@cashfreepayments/cashfree-js";
 import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 import { createOrder } from "../../actions/orderAction";
 
 function PaymentComponent() {
   const navigate = useNavigate();
+  const location = useLocation();
   const dispatch = useDispatch();
 
   // Payment state
@@ -18,32 +19,35 @@ function PaymentComponent() {
   // Redux data
   const { shippingInfo, cartItems } = useSelector((state) => state.cart);
 
-  // Calculate subtotal
-  const subTotal = cartItems.reduce(
+  // Use quickBuy data if available; otherwise, use the entire cart.
+  const orderItems = location.state?.quickBuy ? [location.state.quickBuy] : cartItems;
+
+  // Calculate subtotal based on orderItems.
+  const subTotal = orderItems.reduce(
     (acc, currItem) => acc + currItem.quantity * currItem.price,
     0
   );
 
-  // For demonstration, we’re calling it “deliveryCharges” = 90
+  // Delivery charges (example: 90)
   const deliveryCharges = 90;
   const grandTotal = subTotal + deliveryCharges;
 
-  // (Optional) For generating a unique order ID
+  // Unique order ID generator
   let orderCounter = 0;
   function generateOrderId() {
     const currentDate = new Date();
     const orderDateTimeSeconds = Math.floor(currentDate.getTime() / 1000);
-    orderCounter = (orderCounter + 1) % 1000; // Increment counter, reset after 999
+    orderCounter = (orderCounter + 1) % 1000;
     return `order_${orderDateTimeSeconds}_${orderCounter}`;
   }
 
-  // Create order in DB
+  // Create order in the DB
   const createOrderInDatabase = async (order) => {
     const token = localStorage.getItem("token");
     const config = {
       headers: {
         "Content-Type": "application/json",
-        Authorization: `${token}`,
+        Authorization: token,
       },
     };
     try {
@@ -70,11 +74,11 @@ function PaymentComponent() {
     }
   };
 
-  // For COD orders
+  // COD orders
   const handleSubmit = async () => {
     const order = {
       shippingInfo,
-      orderItems: cartItems,
+      orderItems,
       itemsPrice: subTotal,
       shippingPrice: deliveryCharges,
       totalPrice: grandTotal,
@@ -102,7 +106,7 @@ function PaymentComponent() {
     }
   };
 
-  // For Online Payment
+  // Online Payment
   const doPayment = async () => {
     let cashfree;
     const initializeSDK = async () => {
@@ -112,7 +116,7 @@ function PaymentComponent() {
 
     const order = {
       shippingInfo,
-      orderItems: cartItems,
+      orderItems,
       itemsPrice: subTotal,
       shippingPrice: deliveryCharges,
       totalPrice: grandTotal,
@@ -122,14 +126,14 @@ function PaymentComponent() {
     order.ID = generateOrderId();
 
     try {
-      // Create order in database first
+      // Create order in DB first
       await createOrderInDatabase(order);
 
       const token = localStorage.getItem("token");
       const config = {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `${token}`,
+          Authorization: token,
         },
       };
 
@@ -138,7 +142,7 @@ function PaymentComponent() {
         {
           ...order,
           order_meta: {
-            return_url: `https://kriptees.com/success?orderId=${encodeURIComponent(order.ID)}`,
+            return_url: `https://www.kriptees.com/success?orderId=${encodeURIComponent(order.ID)}`,
             notify_url: "https://www.cashfree.com/devstudio/preview/pg/webhooks/24210234",
             payment_methods: "cc,dc,upi",
           },
@@ -148,7 +152,7 @@ function PaymentComponent() {
 
       console.log("Order created successfully:", data);
 
-      let checkoutOptions = {
+      const checkoutOptions = {
         paymentSessionId: data.payment_session_id,
         redirectTarget: "_self",
       };
@@ -171,56 +175,46 @@ function PaymentComponent() {
 
   return (
     <div className="mt-16 px-4">
-      {/* Outer container to center content and add spacing */}
-      <div className="max-w-6xl mx-auto rounded-lg p-10 shadow-sm">
-        {/* Heading */}
-        <h2
-          className=" 
-            font-black              /* or 'font-[900]' for a numeric weight */
-            text-[48px]
-            leading-[44px]
-            uppercase
-            py-5
-          "
-        >
+      <div className="max-w-6xl mx-auto rounded-lg p-8 shadow-sm bg-white">
+        <h2 className="font-black text-3xl md:text-[44px] leading-[30px] md:leading-[40px] uppercase py-5 text-center md:text-left">
           Order Summary
         </h2>
+
         {/* Product / Item Box */}
         <div className="border border-gray-300 rounded-lg p-4 mb-6 relative">
-          {/* "EDIT" link at top-right */}
           <button
-            onClick={() => navigate("/cart")} // or wherever you want to edit the cart
+            onClick={() => navigate("/cart")}
             className="absolute top-2 right-2 text-gray-600 hover:underline uppercase text-sm"
           >
             Edit
           </button>
 
-          {/* Product details */}
-          {cartItems[0] && (
-            <div className="flex items-center gap-4">
+          {/* Map over all items instead of only showing orderItems[0] */}
+          {orderItems.map((item, index) => (
+            <div key={index} className="flex items-center gap-4 mb-4">
               <img
-                src={cartItems[0].image}
-                alt={cartItems[0].name}
+                src={item.image}
+                alt={item.name}
                 className="w-20 h-24 object-cover border border-gray-200"
               />
               <div className="flex flex-col">
                 <h3 className="font-bold uppercase text-xl mb-1">
-                  {cartItems[0].name}
+                  {item.name}
                 </h3>
-                <p className="text-sm text-gray-600 mb-1">SIZE: {cartItems[0].size}</p>
-
-                {/* Quantity */}
+                <p className="text-sm text-gray-600 mb-1">
+                  SIZE: {item.size}
+                </p>
                 <div className="flex items-center gap-2 text-sm">
                   <span>QUANTITY:</span>
                   <div className="border flex items-center">
                     <button className="px-2 py-1 border-r">-</button>
-                    <span className="px-3 py-1">{cartItems[0].quantity}</span>
+                    <span className="px-3 py-1">{item.quantity}</span>
                     <button className="px-2 py-1 border-l">+</button>
                   </div>
                 </div>
               </div>
             </div>
-          )}
+          ))}
         </div>
 
         {/* Total Box */}
@@ -232,7 +226,9 @@ function PaymentComponent() {
           </div>
           <div className="flex justify-between items-center mb-2">
             <span className="text-gray-500">Delivery Charges</span>
-            <span className="text-gray-700 font-medium">Rs.{deliveryCharges}</span>
+            <span className="text-gray-700 font-medium">
+              Rs.{deliveryCharges}
+            </span>
           </div>
           <div className="flex justify-between items-center border-t border-gray-300 pt-2">
             <span className="uppercase font-bold">Grand-Total</span>
@@ -285,7 +281,7 @@ function PaymentComponent() {
             onClick={handleSubmit}
             className="w-full bg-black text-white py-3 uppercase font-bold tracking-wider hover:bg-gray-800"
           >
-            Proceed to Pay
+            Place Your Order
           </button>
         )}
         {paymentMethod === "ONLINE" && showPayButton && (
@@ -296,12 +292,6 @@ function PaymentComponent() {
             Proceed to Pay
           </button>
         )}
-        {/* 
-          If you want the button always visible, you can unify the logic:
-            - If COD => handleSubmit
-            - Else => doPayment
-          And hide showConfirmation/showPayButton.
-        */}
       </div>
     </div>
   );

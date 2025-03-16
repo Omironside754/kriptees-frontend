@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import ReviewCard from "./ReviewCard";
 import { clearErrors, getProductDetails } from "../../actions/productAction";
@@ -8,8 +8,7 @@ import { addItemToCart } from "../../actions/cartAction";
 import CricketBallLoader from "../Layouts/loader/Loader";
 import { PRODUCT_DETAILS_RESET } from "../../constants/productsConstants";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
-import { addItemToWishlist } from "../../actions/wishlistAction"; // Import Wishlist Action
+import { addItemToWishlist } from "../../actions/wishlistAction";
 
 const ProductDetails = () => {
   const { id } = useParams();
@@ -29,7 +28,6 @@ const ProductDetails = () => {
     (state) => state.productDetails
   );
 
-  // On mount or if id changes, fetch product details
   useEffect(() => {
     if (error) {
       toast.error(error);
@@ -41,7 +39,6 @@ const ProductDetails = () => {
     dispatch(getProductDetails(id));
   }, [dispatch, id, error, success]);
 
-  // Once product is loaded, set the initial main image
   useEffect(() => {
     if (product?.images?.length > 0) {
       setPreviewImg(product.images[0].url);
@@ -49,34 +46,30 @@ const ProductDetails = () => {
     }
   }, [product]);
 
-  // Switch main image on thumbnail click
   const handlePreviewImg = (index) => {
     setPreviewImg(product.images[index].url);
     setI(index);
   };
 
-  // Increase/Decrease quantity
   const increaseQuantityHandler = () => {
     if (product.Stock && quantity >= product.Stock) return;
     setQuantity((prev) => prev + 1);
   };
+
   const decreaseQuantityHandler = () => {
     if (quantity > 1) setQuantity((prev) => prev - 1);
   };
 
-  // Add item to cart
   const handleAddItem = () => {
     dispatch(addItemToCart(id, quantity, size));
     toast.success("Item Added To Cart");
   };
 
-  // Add item to wishlist
   const handleAddToWishlist = () => {
     dispatch(addItemToWishlist(id));
     toast.success("Item Added To Wishlist");
   };
 
-  // Convert product.description into bullet points
   const convertToPoints = (text) => {
     if (text && typeof text === "string") {
       return text
@@ -89,8 +82,23 @@ const ProductDetails = () => {
 
   const points = convertToPoints(product.description);
 
-  const checkoutHandler = async () => {
-    navigate("/login?redirect=/shipping");
+  // Updated "Buy Now" handler passes quickBuy details via navigation state.
+  const checkoutHandler = () => {
+    navigate("/shipping", {
+      state: {
+        quickBuy: {
+          id,
+          quantity,
+          size,
+          name: product.name,
+          price: product.price,
+          image:
+            product.images && product.images.length > 0
+              ? product.images[0].url
+              : "",
+        },
+      },
+    });
   };
 
   return (
@@ -104,10 +112,9 @@ const ProductDetails = () => {
             <div className="max-w-7xl mx-auto px-4 py-4">
               {/* Two-column layout: left for images, right for details */}
               <div className="flex flex-col md:flex-row gap-6">
-                {/* LEFT COLUMN: Main image + vertical thumbnails */}
+                {/* LEFT COLUMN: Main image + thumbnails */}
                 <div className="md:w-1/2">
                   <div className="flex flex-col-reverse md:flex-row gap-4">
-                    {/* Thumbnails (vertical column of smaller images on desktop) */}
                     <div className="flex md:flex-col gap-3 mt-4 md:mt-0 md:w-1/5 overflow-x-auto md:overflow-x-visible">
                       {product.images &&
                         product.images.map((img, index) => (
@@ -126,8 +133,6 @@ const ProductDetails = () => {
                           </div>
                         ))}
                     </div>
-
-                    {/* Main Image */}
                     <div className="md:w-4/5">
                       <img
                         src={previewImg}
@@ -147,8 +152,6 @@ const ProductDetails = () => {
                       {product.info || "Black Anime Printed Oversized Shirt"}
                     </p>
                   </div>
-
-                  {/* Price */}
                   <div className="mb-4">
                     <span className="text-xl font-bold">
                       Rs.{product.price || 799}
@@ -159,8 +162,6 @@ const ProductDetails = () => {
                       </span>
                     )}
                   </div>
-
-                  {/* SIZE */}
                   <div className="mb-6">
                     <h3 className="font-bold mb-2 uppercase text-sm">Size</h3>
                     <div className="flex space-x-2">
@@ -179,10 +180,10 @@ const ProductDetails = () => {
                       ))}
                     </div>
                   </div>
-
-                  {/* QUANTITY */}
                   <div className="mb-6">
-                    <h3 className="font-bold mb-2 uppercase text-sm">Quantity</h3>
+                    <h3 className="font-bold mb-2 uppercase text-sm">
+                      Quantity
+                    </h3>
                     <div className="flex border border-gray-300 w-32">
                       <button
                         onClick={decreaseQuantityHandler}
@@ -201,8 +202,6 @@ const ProductDetails = () => {
                       </button>
                     </div>
                   </div>
-
-                  {/* Buttons */}
                   <div className="flex gap-4 mb-6">
                     <button
                       onClick={handleAddItem}
@@ -217,15 +216,12 @@ const ProductDetails = () => {
                       Add to Wishlist
                     </button>
                   </div>
-
                   <button
                     onClick={checkoutHandler}
                     className="bg-black text-white py-3 uppercase tracking-wider w-full"
                   >
                     Buy Now
                   </button>
-
-                  {/* About Your Choice */}
                   <div className="border-t border-b py-6">
                     <h3 className="font-bold mb-4 uppercase text-lg">
                       About Your Choice
@@ -246,11 +242,6 @@ const ProductDetails = () => {
               </div>
             </div>
           </div>
-
-          {/* Review Section */}
-          {/* <div>
-            <ReviewCard product={product} />
-          </div> */}
         </>
       )}
     </>

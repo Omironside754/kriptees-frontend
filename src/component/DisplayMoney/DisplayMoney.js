@@ -27,7 +27,7 @@ export const displayMoney = function(num) {
   export function generateDiscountedPrice(price) {
     var discountPercentage = 35;
     var discountAmount = (discountPercentage / 100) * price;
-    var discountedPrice = price - discountAmount;
+    var discountedPrice = price + discountAmount;
     return discountedPrice.toFixed(2); 
   }
   

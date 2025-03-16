@@ -3,11 +3,13 @@ import { useSelector, useDispatch } from "react-redux";
 import { saveShippingInfo } from "../../actions/cartAction";
 import MetaData from "../Layouts/MetaData/MetaData";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const Shipping = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
+  
   const { shippingInfo } = useSelector((state) => state.cart);
 
   const [address, setAddress] = React.useState(shippingInfo.address || "");
@@ -81,7 +83,9 @@ const Shipping = () => {
         lastName,
       })
     );
-    navigate("/process/payment");
+    navigate("/process/payment", {
+      state: location.state, // forward the same state to Payment
+    });
   };
 
   return (
