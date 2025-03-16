@@ -123,7 +123,7 @@ function Footer() {
         <h2 className="text-xl font-bold">Stay Connected</h2>
 
         {/* Email address box (non-functional placeholder) */}
-        <div className="mt-4 flex flex-row sm:flex-row items-center gap-3 max-w-sm mx-auto">
+        <div className="mt-4 flex flex-col items-center gap-3 max-w-sm mx-auto">
           <input
             type="email"
             placeholder="Email address"
