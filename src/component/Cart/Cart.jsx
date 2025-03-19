@@ -27,16 +27,23 @@ const Cart = ({ isOpen, onClose }) => {
     }
   }, [isOpen]);
 
+  // FIX: preserve 'size' by looking up the cart item before dispatching
   const increaseQuantity = (id, quantity, stock) => {
     const newQty = quantity + 1;
     if (stock <= quantity) return;
-    dispatch(addItemToCart(id, newQty));
+
+    // Find the existing item so we can retrieve its 'size'
+    const item = cartItems.find((it) => it.productId === id);
+    dispatch(addItemToCart(id, newQty, item?.size));
   };
 
   const decreaseQuantity = (id, quantity) => {
     const newQty = quantity - 1;
     if (1 >= quantity) return;
-    dispatch(addItemToCart(id, newQty));
+
+    // Find the existing item so we can retrieve its 'size'
+    const item = cartItems.find((it) => it.productId === id);
+    dispatch(addItemToCart(id, newQty, item?.size));
   };
 
   const deleteCartItems = (id) => {
@@ -73,7 +80,10 @@ const Cart = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex justify-end">
+    <div
+      className="fixed inset-0 z-50 flex justify-end"
+      style={{ fontFamily: "Montserrat", letterSpacing: "0.1rem" }}
+    >
       {/* Semi-transparent overlay (click to close) */}
       <div
         className="absolute inset-0 bg-black bg-opacity-30 p-4 transition-opacity duration-500"
@@ -190,7 +200,7 @@ const Cart = ({ isOpen, onClose }) => {
                           </button>
                         </div>
                       </div>
-                      <p className="font-bold">₹{item.price}</p>
+                      {/* <p className="font-bold">₹{item.price}</p> */}
                     </div>
                   </div>
                 </div>

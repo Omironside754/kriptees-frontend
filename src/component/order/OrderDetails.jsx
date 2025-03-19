@@ -42,17 +42,18 @@ const OrderDetails = () => {
           {/* Page Heading */}
 
           {trackingDetails && trackingDetails.orderDetails ? (
-            <div className="max-w-6xl mx-auto">
+            <div className="max-w-6xl mx-auto"
+            style={{ fontFamily: "Montserrat", letterSpacing: "0.1rem" }}>
               {/* Order Summary Box */}
               <div className="border border-gray-300 rounded-lg p-6 mb-8">
-                <h2 className="text-xl font-bold uppercase tracking-wide mb-4">
+                <h2 className="text-xl font-extrabold uppercase tracking-wide mb-4">
                   Order Summary
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-1">
                     <p className="text-sm">
                       <span className="font-semibold uppercase">Order ID:</span>{" "}
-                      <span className="hidden md:inline">{trackingDetails.orderDetails.ID}</span>
+                      <span className=" md:inline">{trackingDetails.orderDetails.ID}</span>
                     </p>
                     <p className="text-sm">
                       <span className="font-semibold uppercase">Order Date:</span>{" "}
@@ -60,7 +61,7 @@ const OrderDetails = () => {
                     </p>
                     <p className="text-sm">
                       <span className="font-semibold uppercase">Order Total:</span>{" "}
-                      <span className="hidden md:inline">₹{trackingDetails.orderDetails.totalPrice}</span>
+                      <span className=" md:inline">₹{trackingDetails.orderDetails.totalPrice}</span>
                     </p>
                   </div>
                   <div className="space-y-1">
@@ -169,7 +170,7 @@ const OrderDetails = () => {
               </div>
 
               {/* Actions */}
-              <div className="flex flex-wrap gap-4">
+              <div className="flex flex-wrap gap-2">
                 <button className="border border-black text-black px-4 py-2 uppercase text-sm font-medium hover:bg-black hover:text-white transition-colors">
                   Download Invoice
                 </button>

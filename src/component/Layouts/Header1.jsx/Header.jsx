@@ -169,8 +169,8 @@ function Header() {
           bg-white shadow-lg
         `}
       >
-        <div className="transition-all duration-300 py-1">
-          <div className="max-w-screen-xl mx-auto px-4 flex items-center justify-between">
+        <div className="transition-all duration-300 py-2">
+          <div className="max-w-screen-xl mx-auto px-2 flex items-center justify-between">
             {/* LEFT: Mobile Menu Icon */}
             <div className="flex items-center md:hidden">
               <button onClick={() => setSideMenu(true)}>
@@ -186,7 +186,8 @@ function Header() {
             </div>
 
             {/* RIGHT: Desktop Nav */}
-            <nav className="hidden md:flex space-x-6">
+            <nav className="hidden md:flex space-x-6"
+            style={{ fontFamily: "Montserrat", letterSpacing: "0.2rem" }}>
               <div className="relative group">
                 <button className="uppercase tracking-widest font-semibold flex items-center">
                   COLLECTIONS
@@ -264,7 +265,7 @@ function Header() {
               {/* Search */}
               <button
                 onClick={handleSearchButtonClick}
-                className="px-2 md:px-3 transition hover:-translate-y-1 hover:scale-110 duration-300"
+                className=" md:px-3 transition hover:-translate-y-1 hover:scale-110 duration-300"
               >
                 <svg width="24" height="24" viewBox="0 0 24 24">
                   <path
@@ -276,7 +277,8 @@ function Header() {
               </button>
 
               {/* User (desktop only) */}
-              <div className="relative hidden md:block" ref={sideref}>
+              <div className="relative hidden md:block" ref={sideref}
+              style={{ fontFamily: "Montserrat", letterSpacing: "0.2rem" }}>
                 <button
                   onClick={userIconClick}
                   className="px-2 md:px-3 mt-2 relative transition hover:-translate-y-1 hover:scale-110 duration-300"
@@ -344,7 +346,7 @@ function Header() {
               {/* Cart */}
               <button
                 onClick={cartHandler}
-                className="px-2 md:px-3 transition hover:-translate-y-1 hover:scale-110 duration-300 relative"
+                className="ml-1 mr-2 md:px-3 transition hover:-translate-y-1 hover:scale-110 duration-300 relative"
               >
                 <svg width="24" height="24" viewBox="0 0 24 24">
                   <circle cx="16.75" cy="19.949" r=".75"></circle>
@@ -441,7 +443,8 @@ function Header() {
                 )}
 
                 {/* Navigation Items */}
-                <nav className="space-y-4 text-base font-normal tracking-widest uppercase">
+                <nav className="space-y-4 text-base font-normal tracking-widest uppercase"
+                style={{ fontFamily: "Montserrat", letterSpacing: "0.2rem" }}>
                   {/* Dashboard link for admin, placed right below HOME */}
                   {isAuthenticated && user?.role === "admin" && (
                     <Link to="/admin/dashboard" onClick={() => setSideMenu(false)} className="block hover:text-gray-300">
@@ -491,7 +494,7 @@ function Header() {
                       <Link to="/Hoodies" onClick={() => setSideMenu(false)} className="block hover:text-gray-300">
                         HOODIES
                       </Link>
-                      <Link to="/winterwears/sweatshirts" onClick={() => setSideMenu(false)} className="block hover:text-gray-300">
+                      <Link to="/Sweatshirts" onClick={() => setSideMenu(false)} className="block hover:text-gray-300">
                         SWEATSHIRTS
                       </Link>
                     </div>

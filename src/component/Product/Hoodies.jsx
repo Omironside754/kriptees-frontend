@@ -22,7 +22,7 @@ function Hoodies() {
   return (
     <>
       <MetaData title="Kriptees" />
-      <div className="Home_Page pt-20">
+      <div className="Home_Page pt-14">
         {/* Top Banner */}
         <div className="w-full">
           <img src={img} alt="Banner" className="w-full h-auto" />

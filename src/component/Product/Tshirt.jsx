@@ -30,7 +30,7 @@ function Tshirt() {
         1) Add top padding (pt-20) so the banner image 
         won't be hidden behind the fixed header 
       */}
-      <div className="Home_Page pt-20">
+      <div className="Home_Page pt-14">
         {/* 1) Top Banner */}
         <div className="w-full">
           <img src={img} alt="Banner" className="w-full h-auto" />

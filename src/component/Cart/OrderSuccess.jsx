@@ -89,8 +89,9 @@ function OrderSuccess() {
   console.log("paymentDetails", paymentDetails);
 
   return (
-    <div className="bg-white h-screen mt-36">
-      <div className="bg-white p-6 md:mx-auto">
+    <div className="bg-white mt-16"
+    style={{ fontFamily: "Montserrat", letterSpacing: "0.12rem" }}>
+      <div className="bg-white p-6 mt-34 md:mx-auto">
         <svg viewBox="0 0 24 24" className="text-green-600 w-16 h-16 mx-auto my-6">
           <path
             fill="currentColor"

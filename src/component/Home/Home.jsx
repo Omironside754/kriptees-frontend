@@ -100,12 +100,13 @@ function Home() {
           <img
             src={mobBanner}
             alt="Mobile Banner"
-            className="w-full pt-20 h-auto block md:hidden"
+            className="w-full pt-14 h-auto block md:hidden"
           />
         </div>
 
         {/* 2) Fixed Scrolling Marquee */}
-        <div className="bg-black text-white py-2 overflow-hidden">
+        <div className="bg-black text-white py-2 overflow-hidden"
+        style={{ fontFamily: "Montserrat", letterSpacing: "0.2rem" }}>
           <div className="marquee flex whitespace-nowrap">
             <span className="text-sm md:text-[1.2rem] uppercase tracking-widest px-4 inline-block">
               NEW ARRIVALS EVERY MONTH! &nbsp; NEW ARRIVALS EVERY MONTH! &nbsp;
@@ -130,9 +131,9 @@ function Home() {
             <div className="flex justify-center mt-6 md:mt-8">
               <button
                 onClick={() => navigate("/NewArrival")}
-                className="bg-white text-black px-4 py-2 md:px-6 md:py-3 uppercase font-bold tracking-widest border border-gray-950 rounded-lg hover:bg-gray-400 transition-colors"
+                className="bg-white text-gray-800 font-Ponnala px-4 py-2 md:px-6 md:py-3 uppercase  tracking-widest border border-gray-950 rounded-lg hover:bg-gray-400 transition-colors"
               >
-                View More
+                View All
               </button>
             </div>
           </>
@@ -216,7 +217,8 @@ function Home() {
         )}
 
         {/* Promotional Row with Sliding Animation */}
-        <div className="mt-8 border-y-2 border-slate-200 py-6">
+        <div className="mt-8 border-y-2 border-slate-200 py-6"
+        style={{ fontFamily: "Montserrat", letterSpacing: "0.2rem" }}>
           {/* Desktop view: all columns in a row */}
           <div className="hidden md:flex md:flex-row justify-center items-center gap-[20rem] tracking-widest text-center px-4">
             {features.map((feature, index) => (
@@ -234,7 +236,8 @@ function Home() {
           </div>
 
           {/* Mobile view: sliding animation - FIXED CENTERING */}
-          <div className="block md:hidden flex flex-col justify-center items-center tracking-widest text-center px-4">
+          <div className="block md:hidden flex flex-col justify-center items-center tracking-widest text-center px-4"
+          style={{ fontFamily: "Montserrat", letterSpacing: "0.2rem" }}>
             <div className="relative h-[5rem] w-full overflow-hidden">
               {features.map((feature, index) => (
                 <div

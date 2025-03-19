@@ -26,20 +26,28 @@ function Wishlist() {
   return (
     <>
       <MetaData title="Your Wishlist" />
-      <div className="Home_Page mt-16 px-9 pt-10">
+      {/* Outer container with margin/padding */}
+      <div className="Home_Page mt-10 p-4">
+        {/* Show heading only if there are items */}
+        {wishlistItems.length > 0 && (
+          <h2 className="text-4xl md:text-6xl justify-center flex font-black uppercase tracking-widest py-2">
+            WISHLIST
+          </h2>
+        )}
+
         {wishlistItems.length > 0 ? (
-          // Responsive Grid Layout
-          <div className="md:mt-6 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-8 p-3 md:px-8">
+          /* Products grid */
+          <div className="md:mt-6 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-8">
             {wishlistItems.map((product) => (
               <div key={product.productId} className="relative">
                 <ProductCard
                   product={{
                     ...product,
-                    _id: product.productId, 
+                    _id: product.productId,
                     images: product.image ? [{ url: product.image }] : []
                   }}
                 />
-                {/* Heart Icon - Bottom Right */}
+                {/* Heart Icon - Top Right */}
                 <button
                   onClick={() => {
                     const isInWishlist = wishlistItems.some(
@@ -51,7 +59,7 @@ function Wishlist() {
                       handleAddToWishlist(product);
                     }
                   }}
-                  className="absolute bottom-4 right-4 text-red-500 hover:text-red-700"
+                  className="absolute top-4 right-4 md:top-6 md:right-6 text-orange-400 hover:text-orange-300 z-10"
                 >
                   {wishlistItems.some((item) => item.productId === product.productId) ? (
                     <svg

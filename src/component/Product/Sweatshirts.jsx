@@ -24,7 +24,7 @@ function Sweatshirts() {
       <MetaData title="Sweatshirts - Kriptees" />
 
       {/* Page Container with responsive top padding */}
-      <div className="Home_Page pt-16 md:pt-20">
+      <div className="Home_Page pt-14 md:pt-14">
 
         {/* Top Banner */}
         <div className="w-full">

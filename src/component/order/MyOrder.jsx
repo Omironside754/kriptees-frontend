@@ -100,7 +100,7 @@ const MyOrder = () => {
                       className="w-24 h-28 object-cover border border-gray-200"
                     />
 
-                    <div>
+                    <div style={{ fontFamily: "Montserrat", letterSpacing: "0.1rem" }}>
                       {/* Product Name */}
                       <h2 className="text-xl font-black uppercase tracking-wide mb-1">
                         {mainItem?.name || "KRIPTEES X BERSERK"}
@@ -129,7 +129,8 @@ const MyOrder = () => {
                   </div>
 
                   {/* RIGHT SIDE: TOTAL + BUTTONS */}
-                  <div className="flex flex-col items-end">
+                  <div className="flex flex-col items-end"
+                  style={{ fontFamily: "Montserrat", letterSpacing: "0.1rem" }}>
                     {/* Total Price - hidden on mobile */}
                     <span className="hidden md:block text-lg font-black uppercase mb-2">
                       Total: Rs.{order.totalPrice}

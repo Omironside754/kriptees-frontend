@@ -16,7 +16,8 @@ import { MdCached } from "react-icons/md";
 
 function Footer() {
   return (
-    <footer className="bg-black text-white w-full">
+    <footer className="bg-black text-white w-full"
+    style={{ fontFamily: "Montserrat", letterSpacing: "0.1rem" }}>
       {/* =========== DESKTOP FOOTER (unchanged) =========== */}
       <div className="hidden md:block">
         {/* Upper Footer Section */}

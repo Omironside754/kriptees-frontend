@@ -19,16 +19,33 @@ function PaymentComponent() {
   // Redux data
   const { shippingInfo, cartItems } = useSelector((state) => state.cart);
 
-  // Use quickBuy data if available; otherwise, use the entire cart.
-  const orderItems = location.state?.quickBuy ? [location.state.quickBuy] : cartItems;
+  // Format quickBuy item if available
+  let orderItems = [];
+  if (location.state?.quickBuy) {
+    // Create a properly formatted quickBuy item with consistent field names
+    const quickBuyItem = {
+      productId: location.state.quickBuy.product || location.state.quickBuy.id, // Use product or id
+      name: location.state.quickBuy.name,
+      price: location.state.quickBuy.price,
+      quantity: location.state.quickBuy.quantity || 1,
+      image: location.state.quickBuy.image,
+      size: location.state.quickBuy.size || "M",
+      // Add any other fields that might be required by your backend
+    };
+    orderItems = [quickBuyItem];
+    console.log("Using formatted quickBuy item:", quickBuyItem);
+  } else {
+    orderItems = cartItems;
+    console.log("Using cart items:", cartItems);
+  }
 
   // Calculate subtotal based on orderItems.
   const subTotal = orderItems.reduce(
     (acc, currItem) => acc + currItem.quantity * currItem.price,
     0
   );
-
-  // Delivery charges (example: 90)
+  
+  // Delivery charges
   const deliveryCharges = 90;
   const grandTotal = subTotal + deliveryCharges;
 
@@ -51,10 +68,25 @@ function PaymentComponent() {
       },
     };
     try {
-      await axios.post(`https://kriptees-backend-ays7.onrender.com/api/v1/order/new`, order, config);
+      // Try to normalize the order structure between quickBuy and cart items
+      const normalizedOrder = {
+        ...order,
+        orderItems: order.orderItems.map(item => ({
+          ...item,
+          product: item.productId || item.product, // Ensure product field is present
+          productId: item.productId || item.product, // Ensure productId field is present
+        }))
+      };
+      
+      console.log("Sending normalized order to database:", JSON.stringify(normalizedOrder));
+      await axios.post(`https://kriptees-backend-ays7.onrender.com/api/v1/order/new`, normalizedOrder, config);
       console.log("Order created in database");
     } catch (error) {
       console.error("Error creating order in database:", error);
+      if (error.response) {
+        console.error("Server response data:", error.response.data);
+        console.error("Server response status:", error.response.status);
+      }
       throw error;
     }
   };
@@ -76,27 +108,29 @@ function PaymentComponent() {
 
   // COD orders
   const handleSubmit = async () => {
-    const order = {
-      shippingInfo,
-      orderItems,
-      itemsPrice: subTotal,
-      shippingPrice: deliveryCharges,
-      totalPrice: grandTotal,
-    };
-
-    order.ID = generateOrderId();
-    order.paymentInfo = {
-      id: "Cash On Delivery",
-      status: "COD",
-    };
-
     try {
+      const orderId = generateOrderId();
+      
+      const order = {
+        shippingInfo,
+        orderItems,
+        itemsPrice: subTotal,
+        shippingPrice: deliveryCharges,
+        totalPrice: grandTotal,
+        paymentInfo: {
+          id: "Cash On Delivery",
+          status: "COD",
+        },
+        ID: orderId
+      };
+
+      console.log("Final order data for COD:", order);
       await createOrderInDatabase(order);
       dispatch(createOrder(order));
       toast.success("Order Confirmed!");
-      navigate(`/success?orderId=${encodeURIComponent(order.ID)}`, {
+      navigate(`/success?orderId=${encodeURIComponent(orderId)}`, {
         state: {
-          orderId: order.ID,
+          orderId: orderId,
           paymentMethod: paymentMethod,
         },
       });
@@ -114,19 +148,24 @@ function PaymentComponent() {
     };
     await initializeSDK();
 
-    const order = {
-      shippingInfo,
-      orderItems,
-      itemsPrice: subTotal,
-      shippingPrice: deliveryCharges,
-      totalPrice: grandTotal,
-      paymentInfo: { id: "pending", status: "pending" },
-    };
-
-    order.ID = generateOrderId();
-
     try {
+      const orderId = generateOrderId();
+      
+      const order = {
+        shippingInfo,
+        orderItems,
+        itemsPrice: subTotal,
+        shippingPrice: deliveryCharges,
+        totalPrice: grandTotal,
+        paymentInfo: { 
+          id: "pending", 
+          status: "pending" 
+        },
+        ID: orderId
+      };
+
       // Create order in DB first
+      console.log("Final order data for online payment:", order);
       await createOrderInDatabase(order);
 
       const token = localStorage.getItem("token");
@@ -142,7 +181,7 @@ function PaymentComponent() {
         {
           ...order,
           order_meta: {
-            return_url: `https://www.kriptees.com/success?orderId=${encodeURIComponent(order.ID)}`,
+            return_url: `https://kriptees.com//success?orderId=${encodeURIComponent(orderId)}`,
             notify_url: "https://www.cashfree.com/devstudio/preview/pg/webhooks/24210234",
             payment_methods: "cc,dc,upi",
           },
@@ -174,14 +213,15 @@ function PaymentComponent() {
   };
 
   return (
-    <div className="mt-16 px-4">
+    <div className="mt-8 md:mt-12 px-4">
       <div className="max-w-6xl mx-auto rounded-lg p-8 shadow-sm bg-white">
         <h2 className="font-black text-3xl md:text-[44px] leading-[30px] md:leading-[40px] uppercase py-5 text-center md:text-left">
           Order Summary
         </h2>
 
         {/* Product / Item Box */}
-        <div className="border border-gray-300 rounded-lg p-4 mb-6 relative">
+        <div className="border border-gray-300 rounded-lg p-4 mb-6 relative"
+        style={{ fontFamily: "Montserrat", letterSpacing: "0.1rem" }}>
           <button
             onClick={() => navigate("/cart")}
             className="absolute top-2 right-2 text-gray-600 hover:underline uppercase text-sm"
@@ -189,7 +229,7 @@ function PaymentComponent() {
             Edit
           </button>
 
-          {/* Map over all items instead of only showing orderItems[0] */}
+          {/* Map over all items */}
           {orderItems.map((item, index) => (
             <div key={index} className="flex items-center gap-4 mb-4">
               <img
@@ -218,7 +258,8 @@ function PaymentComponent() {
         </div>
 
         {/* Total Box */}
-        <div className="border border-gray-300 rounded-lg p-4 mb-6">
+        <div className="border border-gray-300 rounded-lg p-4 mb-6"
+        style={{ fontFamily: "Montserrat", letterSpacing: "0.1rem" }}>
           <h4 className="uppercase font-bold text-lg mb-4">Total</h4>
           <div className="flex justify-between items-center mb-2">
             <span className="text-gray-500">Product Cost</span>
@@ -237,7 +278,8 @@ function PaymentComponent() {
         </div>
 
         {/* Payments Box */}
-        <div className="border border-gray-300 rounded-lg p-4 mb-6">
+        <div className="border border-gray-300 rounded-lg p-4 mb-6"
+        style={{ fontFamily: "Montserrat", letterSpacing: "0.1rem" }}>
           <h4 className="uppercase font-bold text-lg mb-4">Payments</h4>
           <div className="flex items-center mb-2">
             <input
@@ -264,7 +306,8 @@ function PaymentComponent() {
         </div>
 
         {/* Terms & Conditions */}
-        <div className="flex items-center mb-6">
+        <div className="flex items-center mb-6"
+        style={{ fontFamily: "Montserrat", letterSpacing: "0.1rem" }}>
           <input
             required
             type="checkbox"
@@ -280,6 +323,7 @@ function PaymentComponent() {
           <button
             onClick={handleSubmit}
             className="w-full bg-black text-white py-3 uppercase font-bold tracking-wider hover:bg-gray-800"
+            style={{ fontFamily: "Montserrat", letterSpacing: "0.1rem" }}
           >
             Place Your Order
           </button>
@@ -288,6 +332,7 @@ function PaymentComponent() {
           <button
             onClick={doPayment}
             className="w-full bg-black text-white py-3 uppercase font-bold tracking-wider hover:bg-gray-800"
+            style={{ fontFamily: "Montserrat", letterSpacing: "0.1rem" }}
           >
             Proceed to Pay
           </button>

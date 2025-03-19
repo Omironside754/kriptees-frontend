@@ -91,7 +91,7 @@ const Shipping = () => {
   return (
     <>
       <MetaData title={"Shipping Info"} />
-      <div className="Home_Page min-h-screen mt-16">
+      <div className="Home_Page min-h-screen mt-4 md:mt-8">
         <div className="max-w-7xl mx-auto px-4 py-16">
           {/* Page Heading */}
           <h2 className="text-4xl font-black uppercase tracking-widest mb-8 text-center">
@@ -99,7 +99,8 @@ const Shipping = () => {
           </h2>
 
           {/* Form Container */}
-          <div className="bg-white border border-gray-300 rounded shadow-lg p-6">
+          <div className="bg-white border border-gray-300 rounded shadow-lg p-6"
+          style={{ fontFamily: "Montserrat", letterSpacing: "0.2rem" }}>
             <form onSubmit={handleSubmit}>
               {/* First + Last Name */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
