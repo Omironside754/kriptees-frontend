@@ -201,7 +201,7 @@ function Header() {
                     <path strokeLinecap="round" strokeLinejoin="round" d="M6 9l6 6 6-6" />
                   </svg>
                 </button>
-                <div className="absolute right-0 mt-2 min-w-[150px] bg-white text-black text-xs shadow-lg border border-gray-200 rounded hidden group-hover:block divide-y divide-gray-200">
+                <div className="absolute right-0  min-w-[150px] bg-white text-black text-xs shadow-lg border border-gray-200 rounded hidden group-hover:block divide-y divide-gray-200">
                   <Link to="/NewArrival" className="block px-4 py-2 hover:bg-gray-100 uppercase tracking-widest">
                     NEW ARRIVALS
                   </Link>
@@ -227,7 +227,7 @@ function Header() {
                     <path strokeLinecap="round" strokeLinejoin="round" d="M6 9l6 6 6-6" />
                   </svg>
                 </button>
-                <div className="absolute right-0 mt-2 min-w-[150px] text-xs bg-white text-black shadow-lg border border-gray-200 rounded hidden group-hover:block divide-y divide-gray-200">
+                <div className="absolute right-0  min-w-[150px] text-xs bg-white text-black shadow-lg border border-gray-200 rounded hidden group-hover:block divide-y divide-gray-200">
                   <Link to="/Hoodies" className="block px-4 py-2 hover:bg-gray-100 uppercase tracking-widest">
                     HOODIES
                   </Link>
