@@ -205,12 +205,12 @@ function Header() {
                   <Link to="/NewArrival" className="block px-4 py-2 hover:bg-gray-100 uppercase tracking-widest">
                     NEW ARRIVALS
                   </Link>
-                  <Link to="/collections/kriptees-spc" className="block px-4 py-2 hover:bg-gray-100 uppercase tracking-widest">
+{/*                   <Link to="/collections/kriptees-spc" className="block px-4 py-2 hover:bg-gray-100 uppercase tracking-widest">
                     KRIPTEES SPC.
                   </Link>
                   <Link to="/collections/anime-arc" className="block px-4 py-2 hover:bg-gray-100 uppercase tracking-widest">
                     ANIME ARC
-                  </Link>
+                  </Link> */}
                 </div>
               </div>
 
@@ -476,12 +476,12 @@ function Header() {
                       <Link to="/NewArrival" onClick={() => setSideMenu(false)} className="block hover:text-gray-300">
                         NEW ARRIVALS
                       </Link>
-                      <Link to="/collections/kriptees-spc" onClick={() => setSideMenu(false)} className="block hover:text-gray-300">
+{/*                       <Link to="/collections/kriptees-spc" onClick={() => setSideMenu(false)} className="block hover:text-gray-300">
                         KRIPTEES SPC.
                       </Link>
                       <Link to="/collections/anime-arc" onClick={() => setSideMenu(false)} className="block hover:text-gray-300">
                         ANIME ARC
-                      </Link>
+                      </Link> */}
                     </div>
                   )}
                   {/* WINTERWEARS Submenu */}
