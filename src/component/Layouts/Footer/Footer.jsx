@@ -21,7 +21,8 @@ function Footer() {
       {/* =========== DESKTOP FOOTER (unchanged) =========== */}
       <div className="hidden md:block">
         {/* Upper Footer Section */}
-        <div className="container mx-auto px-6 py-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="container mx-auto px-6 py-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 ">
+
           {/* Column 1: Company */}
           <div>
             <h4 className="text-lg font-bold mb-3">Company</h4>
@@ -62,7 +63,7 @@ function Footer() {
           </div>
 
           {/* Column 4: Newsletter */}
-          <div className="flex flex-col space-y-3">
+          {/* <div className="flex flex-col space-y-3">
             <h4 className="text-lg font-bold">Stay Connected</h4>
             <p className="text-sm text-gray-400">
               Join our newsletter for the latest updates and exclusive offers!
@@ -77,7 +78,7 @@ function Footer() {
                 Subscribe
               </button>
             </div>
-          </div>
+          </div> */}
         </div>
 
         {/* Lower Footer Section */}
@@ -121,10 +122,10 @@ function Footer() {
       {/* =========== MOBILE FOOTER (new) =========== */}
       <div className="block md:hidden text-center px-4 py-6 space-y-6">
         {/* Heading */}
-        <h2 className="text-xl font-bold">Stay Connected</h2>
+        {/* <h2 className="text-xl font-bold">Stay Connected</h2> */}
 
         {/* Email address box (non-functional placeholder) */}
-        <div className="mt-4 flex flex-col items-center gap-3 max-w-sm mx-auto">
+        {/* <div className="mt-4 flex flex-col items-center gap-3 max-w-sm mx-auto">
           <input
             type="email"
             placeholder="Email address"
@@ -138,7 +139,7 @@ function Footer() {
           >
             Subscribe
           </button>
-        </div>
+        </div> */}
 
 
         {/* Social Icons (Facebook, Instagram, X) */}
