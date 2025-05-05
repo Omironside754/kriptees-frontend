@@ -10,6 +10,9 @@ import Footer from "./component/Layouts/Footer/Footer";
 import AboutUs from "./Terms&Condtions/Aboutus";
 import ContactUs from "./Terms&Condtions/Contact";
 import ShippingPolicy from "./Terms&Condtions/ShippingPolicy";
+import Career from "./Terms&Condtions/Career";
+import FAQ from "./Terms&Condtions/FAQ";
+
 import Services from "./Terms&Condtions/Service";
 import TermsAndConditions from "./Terms&Condtions/TermsandConditions";
 import PrivacyPolicy from "./Terms&Condtions/Privacy";
@@ -52,7 +55,7 @@ function App() {
   useEffect(() => {
     dispatch(load_UserProfile());
   }, [dispatch]);
-  const { isAuthenticated, user ,loading } = useSelector((state) => state.userData);
+  const { isAuthenticated, user, loading } = useSelector((state) => state.userData);
   if (loading) {
     return <div>Loading...</div>; // Or your loader component
   }
@@ -101,7 +104,7 @@ function App() {
             }
           />
           <Route
-            path="/AboutUs"
+            path="/about"
             element={
               <PageTransition>
                 <Header />
@@ -111,7 +114,7 @@ function App() {
             }
           />
           <Route
-            path="/ContactUs"
+            path="/contact"
             element={
               <PageTransition>
                 <Header />
@@ -121,7 +124,28 @@ function App() {
             }
           />
           <Route
-            path="/PrivacyPolicy"
+            path="/careers"
+            element={
+              <PageTransition>
+                <Header />
+                <Career />
+                <Footer />
+              </PageTransition>
+            }
+          />
+          <Route
+            path="/faq"
+            element={
+              <PageTransition>
+                <Header />
+                <FAQ />
+                <Footer />
+              </PageTransition>
+            }
+          />
+
+          <Route
+            path="/privacy"
             element={
               <PageTransition>
                 <Header />
@@ -131,7 +155,7 @@ function App() {
             }
           />
           <Route
-            path="/RefundandCancellation"
+            path="/return"
             element={
               <PageTransition>
                 <Header />
@@ -141,7 +165,7 @@ function App() {
             }
           />
           <Route
-            path="/ShipandDelivery"
+            path="/shipping"
             element={
               <PageTransition>
                 <Header />
@@ -151,7 +175,7 @@ function App() {
             }
           />
           <Route
-            path="/TermsandConditions"
+            path="/terms"
             element={
               <PageTransition>
                 <Header />
