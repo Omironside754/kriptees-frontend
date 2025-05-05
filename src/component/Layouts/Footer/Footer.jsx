@@ -17,7 +17,7 @@ import { MdCached } from "react-icons/md";
 function Footer() {
   return (
     <footer className="bg-black text-white w-full"
-    style={{ fontFamily: "Montserrat", letterSpacing: "0.1rem" }}>
+      style={{ fontFamily: "Montserrat", letterSpacing: "0.1rem" }}>
       {/* =========== DESKTOP FOOTER (unchanged) =========== */}
       <div className="hidden md:block">
         {/* Upper Footer Section */}
@@ -39,7 +39,7 @@ function Footer() {
             <ul className="space-y-2">
               <li><Link to="/contact" className="hover:text-gray-400">Contact Us</Link></li>
               <li><Link to="/faq" className="hover:text-gray-400">FAQ</Link></li>
-              <li><Link to="/shipping" className="hover:text-gray-400">Shipping & Returns</Link></li>
+              <li><Link to="/return" className="hover:text-gray-400">Returns policy</Link></li>
             </ul>
           </div>
 
@@ -108,10 +108,12 @@ function Footer() {
           {/* Bottom Links */}
           <div className="mt-4">
             <ul className="flex flex-col sm:flex-row justify-center space-y-2 sm:space-y-0 sm:space-x-5">
-              <li><Link to="/privacy" className="hover:text-white">Privacy Policy</Link></li>
+              <li><Link to="/privacy" className="text-gray-400 hover:text-gray-200">
+                Privacy Policy
+              </Link></li>
               <li><Link to="/terms" className="hover:text-white">Terms & Conditions</Link></li>
-              <li><Link to="/refund" className="hover:text-white">Refund Policy</Link></li>
-              <li><Link to="/contact" className="hover:text-white">Contact Us</Link></li>
+        
+              <li><Link to="/shipping" className="hover:text-white"> Shipping Policy </Link></li>
             </ul>
           </div>
 
@@ -158,14 +160,14 @@ function Footer() {
 
         {/* Bottom links */}
         <div className="flex flex-wrap justify-center gap-4 text-sm text-gray-400">
-          <Link to="/about" className="hover:text-gray-200">
+          <Link to="/about" className="text-gray-400 hover:text-gray-200">
             About Us
           </Link>
           <Link to="/careers" className="hover:text-gray-200">
             Careers
           </Link>
-          <Link to="/press" className="hover:text-gray-200">
-            Press
+          <Link to="/blogs" className="hover:text-gray-200">
+            Blogs
           </Link>
           <Link to="/contact" className="hover:text-gray-200">
             Contact Us
