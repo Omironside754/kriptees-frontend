@@ -110,6 +110,11 @@ export const load_UserProfile = () => async (dispatch) => {
     dispatch({ type: LOAD_USER_REQUEST });
     
     const token = localStorage.getItem('token');
+    if (!token) {
+      dispatch({ type: LOAD_USER_FAIL, payload: "No token found" });
+      return;
+    }
+    
     const config = {
       headers: { 
         Authorization: `${token}`
@@ -123,7 +128,7 @@ export const load_UserProfile = () => async (dispatch) => {
       dispatch({ type: LOAD_USER_SUCCESS, payload: user });
     } else {
       // If not in session storage, make API call
-      const { data } = await axios.get("https://kriptees-backend-ays7.onrender.com/api/v1/profile", config);
+      const { data } = await axios.get("https://kriptees-backend-ays7.onrender.com/profile", config);
       dispatch({ type: LOAD_USER_SUCCESS, payload: data.user });
       sessionStorage.setItem("user", JSON.stringify(data.user));
     }
@@ -152,7 +157,6 @@ export function logout() {
 
 
 // Update Profile => 
-
 export function updateProfile(userData) {
   return async function (dispatch) {
     try {
@@ -187,7 +191,7 @@ export function updateProfile(userData) {
   }
 }
 
-
+// update password
 export function updatePassword(userPassWord) {
   return async function (dispatch) {
     try {
@@ -214,21 +218,21 @@ export function updatePassword(userPassWord) {
     }
   }
 }
-// forgetPassword;
 
+// forgetPassword;
 export function forgetPassword(email) {
   return async function (dispatch) {
     try {
       dispatch({ type: FORGOT_PASSWORD_REQUEST });
 
       const config = {
-        headers: { "Content-Type": "application/json", Authorization: `${token}` },
+        headers: { "Content-Type": "application/json" },
+        withCredentials: true,
       };
 
       const { data } = await axios.post(
         `https://kriptees-backend-ays7.onrender.com/api/v1/password/forgot`,
-
-        email,
+        { email }, // ✅ wrap it in object
         config
       );
 
@@ -237,22 +241,25 @@ export function forgetPassword(email) {
         payload: data.message,
       });
     } catch (error) {
-      dispatch({ type: FORGOT_PASSWORD_FAIL, payload: error.message });
+      dispatch({
+        type: FORGOT_PASSWORD_FAIL,
+        payload: error.response?.data?.message || error.message,
+      });
     }
   };
 }
-
 
 // reset password action
 export const resetPassword = (token, passwords) => async (dispatch) => {
   try {
     dispatch({ type: RESET_PASSWORD_REQUEST });
-
-    const config = { headers: { "Content-Type": "application/json", Authorization: `${token}` } };
+    const config = {
+      headers: { "Content-Type": "application/json" },
+      withCredentials: true,
+    };
 
     const { data } = await axios.put(
       `https://kriptees-backend-ays7.onrender.com/api/v1/password/reset/${token}`,
-
       passwords,
       config
     );
@@ -261,7 +268,7 @@ export const resetPassword = (token, passwords) => async (dispatch) => {
   } catch (error) {
     dispatch({
       type: RESET_PASSWORD_FAIL,
-      payload: error.message,
+      payload: error.response?.data?.message || error.message,
     });
   }
 };
