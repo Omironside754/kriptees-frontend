@@ -45,6 +45,8 @@ import Activator from "./component/Route/Activator";
 import PaymentComponent from "./component/Cart/Payment";
 import UpdateUser from "./component/Admin/UpdateUser";
 import CustomOrderPage from "./component/Home/CustomOrder";
+import ForgetPassword from "./component/User/ForgetPassword";
+import ResetPassword from "./component/User/ResetPassword";
 import Scroll from "./scroll";
 import { AnimatePresence } from "framer-motion";
 
@@ -103,6 +105,27 @@ function App() {
               </PageTransition>
             }
           />
+          <Route
+            path="/forgot-password"
+            element={
+              <PageTransition>
+                <Header />
+                <ForgetPassword />
+                <Footer />
+              </PageTransition>
+            }
+          />
+          <Route
+            path="/password/reset/:token"
+            element={
+              <PageTransition>
+                <Header />
+                <ResetPassword />
+                <Footer />
+              </PageTransition>
+            }
+          />
+
           <Route
             path="/about"
             element={
