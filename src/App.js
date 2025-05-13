@@ -188,7 +188,7 @@ function App() {
             }
           />
           <Route
-            path="/shipping"
+            path="/shipping-policy"
             element={
               <PageTransition>
                 <Header />
