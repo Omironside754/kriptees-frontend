@@ -1,55 +1,93 @@
-import { toast } from 'react-toastify';
-import { useNavigate } from "react-router-dom";
-import MetaData from "../component/Layouts/MetaData/MetaData";
+import React from "react";
 
-const ContactUs = () => {
-  // const alert = useAlert();
-  const navigate = useNavigate();
-  const handleCall = () => {
-    window.location.href = "tel:+917079604172";
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    toast.success("Your message has been sent successfully");
-    navigate("/");
-  };
-
+const FAQ = () => {
   return (
-    <section class="bg-white dark:bg-gray-900 mt-16">
-      <div class="py-8 lg:py-16 px-4 mx-auto max-w-screen-md">
-        <h2 class="mb-4 text-4xl tracking-tight font-extrabold text-center text-gray-900 dark:text-white">Contact Us</h2>
+    <section className="bg-white dark:bg-gray-900 mt-16 min-h-screen">
+      <div className="max-w-4xl mx-auto px-4 py-16">
+        <h1 className="text-4xl font-bold text-center text-gray-900 dark:text-white mb-10">
+          FAQ’s
+        </h1>
 
-        <p class="mb-8 lg:mb-16 font-light text-center text-gray-500 dark:text-gray-400 sm:text-xl">
-          You may contact us using the information below:
-          <ul>
-            <li> Merchant Legal entity name: KRISHNA SINGH</li>
-            <li> Registered Address: D 12 sector 27 Noida, Near Anjali Market, Noida, Uttar Pradesh, PIN: 201301</li>
-            <li> Operational Address: D 12 sector 27 Noida, Near Anjali Market, Noida, Uttar Pradesh, PIN: 201301</li>
-            <li> Telephone No: 7079604172</li>
-            <li> E-Mail ID: kripteesofficial@gmail.com</li>
-          </ul>
-        </p>
-{/* 
-        <p class="mb-8 lg:mb-16 font-light text-center text-gray-500 dark:text-gray-400 sm:text-xl">Got a technical issue? Want to send feedback about a beta feature? Need details about our Business plan? Let us know.</p>
-        <form action="#" class="space-y-8">
-          <div>
-            <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Your email</label>
-            <input type="email" id="email" class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500 dark:shadow-sm-light" placeholder="name@flowbite.com" required />
+        <div className="space-y-6">
+          <div className="border-b pb-4">
+            <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200">
+              Q1: What is Kriptees?
+            </h3>
+            <p className="text-gray-600 dark:text-gray-400">
+              A: Kriptees is an online retailer offering high-quality, affordable anime-inspired
+              streetwear, including T-shirts, hoodies, and sweatshirts for anime enthusiasts.
+            </p>
           </div>
-          <div>
-            <label for="subject" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Subject</label>
-            <input type="text" id="subject" class="block p-3 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 shadow-sm focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500 dark:shadow-sm-light" placeholder="Let us know how we can help you" required />
+
+          <div className="border-b pb-4">
+            <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200">
+              Q2: What products does Kriptees offer?
+            </h3>
+            <p className="text-gray-600 dark:text-gray-400">
+              A: Kriptees specializes in anime-themed apparel such as T-shirts, hoodies, and
+              sweatshirts, featuring designs inspired by popular anime series.
+            </p>
           </div>
-          <div class="sm:col-span-2">
-            <label for="message" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-400">Your message</label>
-            <textarea id="message" rows="6" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg shadow-sm border border-gray-300 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Leave a comment..."></textarea>
+
+          <div className="border-b pb-4">
+            <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200">
+              Q3: Does Kriptees offer customization options?
+            </h3>
+            <p className="text-gray-600 dark:text-gray-400">
+              A: Yes, Kriptees provides custom apparel services, allowing customers to
+              create personalized designs on various clothing items.
+            </p>
           </div>
-          <button type="submit" class="py-3 px-5 text-sm font-medium text-center text-white rounded-lg bg-primary-700 sm:w-fit hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">Send message</button>
-        </form> */}
+
+          <div className="border-b pb-4">
+            <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200">
+              Q4: What are the shipping options available?
+            </h3>
+            <p className="text-gray-600 dark:text-gray-400">
+              A: Kriptees offers pan-India shipping, ensuring delivery across the country.
+            </p>
+          </div>
+
+          <div className="border-b pb-4">
+            <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200">
+              Q5: What is Kriptees’ return and exchange policy?
+            </h3>
+            <p className="text-gray-600 dark:text-gray-400">
+              A: Kriptees offers a 7-day easy return and exchange policy with no questions asked.
+            </p>
+          </div>
+
+          <div className="border-b pb-4">
+            <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200">
+              Q6: How can I contact Kriptees for further assistance?
+            </h3>
+            <p className="text-gray-600 dark:text-gray-400">
+              A: You can reach out to Kriptees through their Contact Us page on the website.
+            </p>
+          </div>
+
+          <div className="border-b pb-4">
+            <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200">
+              Q7: Are Kriptees products made in India?
+            </h3>
+            <p className="text-gray-600 dark:text-gray-400">
+              A: Yes, Kriptees is a 100% homegrown brand, and all products are made in India.
+            </p>
+          </div>
+
+          <div className="border-b pb-4">
+            <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200">
+              Q8: How can I stay updated on new arrivals and promotions?
+            </h3>
+            <p className="text-gray-600 dark:text-gray-400">
+              A: To stay informed about the latest products and offers, follow Kriptees on
+              their official Instagram account: @kriptees_official.
+            </p>
+          </div>
+        </div>
       </div>
     </section>
   );
 };
 
-export default ContactUs;
+export default FAQ;
