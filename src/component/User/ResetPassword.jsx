@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { resetPassword } from "../../actions/userAction";
 import { toast } from "react-toastify";
+import { Eye, EyeOff } from "lucide-react"; // Optional: use any icon library or custom SVG
 
 function ResetPassword() {
   const { token } = useParams();
@@ -11,6 +12,8 @@ function ResetPassword() {
 
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const { error, success, loading } = useSelector((state) => state.forgetPassword);
 
@@ -39,32 +42,46 @@ function ResetPassword() {
           </p>
         </div>
         <form className="mt-8 space-y-6" onSubmit={submitHandler}>
-          <div className="rounded-md shadow-sm space-y-4">
-            <div>
+          <div className="space-y-4">
+            <div className="relative">
               <input
-                type="password"
+                type={showPassword ? "text" : "password"}
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="New Password"
                 className="appearance-none rounded relative block w-full px-3 py-2 border border-gray-300 
-                placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 
-                focus:border-indigo-500 sm:text-sm"
+                  placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 
+                  focus:border-indigo-500 sm:text-sm pr-10"
               />
+              <span
+                onClick={() => setShowPassword((prev) => !prev)}
+                className="absolute right-3 top-2.5 cursor-pointer text-gray-500"
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </span>
             </div>
-            <div>
+
+            <div className="relative">
               <input
-                type="password"
+                type={showConfirmPassword ? "text" : "password"}
                 required
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 placeholder="Confirm Password"
                 className="appearance-none rounded relative block w-full px-3 py-2 border border-gray-300 
-                placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 
-                focus:border-indigo-500 sm:text-sm"
+                  placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 
+                  focus:border-indigo-500 sm:text-sm pr-10"
               />
+              <span
+                onClick={() => setShowConfirmPassword((prev) => !prev)}
+                className="absolute right-3 top-2.5 cursor-pointer text-gray-500"
+              >
+                {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </span>
             </div>
           </div>
+
           <div>
             <button
               type="submit"
