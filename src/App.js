@@ -355,6 +355,7 @@ function App() {
               "/order/confirm"
             )}
           />
+            
           <Route
             path="/success"
             element={wrapPrivateRoute(
