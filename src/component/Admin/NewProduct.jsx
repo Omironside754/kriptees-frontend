@@ -117,13 +117,7 @@ function NewProduct() {
                     required
                     className="w-full p-2 border border-gray-300 rounded-md"
                   />
-                  <input
-                    placeholder="Product Info"
-                    value={info}
-                    onChange={(e) => setInfo(e.target.value)}
-                    required
-                    className="w-full p-2 border border-gray-300 rounded-md"
-                  />
+                  
                   <select
                     value={category}
                     onChange={(e) => setCategory(e.target.value)}
