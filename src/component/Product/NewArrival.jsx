@@ -4,7 +4,8 @@ import { clearErrors, getProduct } from "../../actions/productAction";
 import { toast } from "react-toastify";
 import MetaData from "../Layouts/MetaData/MetaData";
 import ProductCard from "../Home/ProductCard";
-import img from "../../ecommerce images/NewArrTop.png";
+const newArrTopBanner = "https://res.cloudinary.com/dafv5daza/image/upload/q_auto,f_auto,w_1600/ecommerce%20images/NewArrTop_z53xy0.png";
+
 
 function NewArrival() {
   const dispatch = useDispatch();
@@ -33,7 +34,7 @@ function NewArrival() {
       <div className="Home_Page pt-14">
         {/* Top Banner */}
         <div className="w-full">
-          <img src={img} alt="Banner" className="w-full h-auto" />
+          <img src={newArrTopBanner} alt="New Arrivals Banner" loading="lazy" className="w-full h-auto" />
         </div>
 
         {/* Heading & Subtext */}
