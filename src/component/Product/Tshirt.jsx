@@ -5,7 +5,8 @@ import { toast } from "react-toastify";
 import MetaData from "../Layouts/MetaData/MetaData";
 import ProductCard from "../Home/ProductCard";
 
-import img from "../../ecommerce images/TshirtTop.png";
+const tshirtTopBanner = "https://res.cloudinary.com/dafv5daza/image/upload/q_auto,f_auto,w_1600/ecommerce%20images/TshirtTop_y1ops2.png";
+
 
 function Tshirt() {
   const dispatch = useDispatch();
@@ -43,7 +44,7 @@ function Tshirt() {
       <div className="Home_Page pt-14">
         {/* Top Banner */}
         <div className="w-full">
-          <img src={img} alt="Banner" className="w-full h-auto" />
+          <img src={tshirtTopBanner} alt="T-shirt Banner" loading="lazy" className="w-full h-auto" />
         </div>
 
         {/* Heading */}
@@ -74,11 +75,10 @@ function Tshirt() {
               <button
                 key={page}
                 onClick={() => setCurrentPage(page)}
-                className={`min-w-[2.5rem] h-10 border ${
-                  currentPage === page
+                className={`min-w-[2.5rem] h-10 border ${currentPage === page
                     ? "bg-blue-500 text-white"
                     : "bg-white text-gray-700 hover:bg-gray-50"
-                } rounded`}
+                  } rounded`}
               >
                 {page}
               </button>
