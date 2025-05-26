@@ -4,7 +4,7 @@ import { clearErrors, getProduct } from "../../actions/productAction";
 import { toast } from "react-toastify";
 import MetaData from "../Layouts/MetaData/MetaData";
 import ProductCard from "../Home/ProductCard";
-import sweatshirtBanner from "../../ecommerce images/SweatShirtTop.png";
+const sweatshirtBanner = "https://res.cloudinary.com/dafv5daza/image/upload/q_auto,f_auto,w_1600/ecommerce%20images/SweatShirtTop_mhfpgd.png";
 
 function Sweatshirts() {
   const dispatch = useDispatch();
