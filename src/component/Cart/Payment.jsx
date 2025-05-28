@@ -15,6 +15,8 @@ function PaymentComponent() {
   const [paymentMethod, setPaymentMethod] = useState(null);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [showPayButton, setShowPayButton] = useState(false);
+  const [paymentDetails, setPaymentDetails] = useState([]);
+  console.log("Payment details:", paymentDetails);
 
   // Redux data
   const { shippingInfo, cartItems } = useSelector((state) => state.cart);
@@ -22,15 +24,13 @@ function PaymentComponent() {
   // Format quickBuy item if available
   let orderItems = [];
   if (location.state?.quickBuy) {
-    // Create a properly formatted quickBuy item with consistent field names
     const quickBuyItem = {
-      productId: location.state.quickBuy.product || location.state.quickBuy.id, // Use product or id
+      productId: location.state.quickBuy.product || location.state.quickBuy.id,
       name: location.state.quickBuy.name,
       price: location.state.quickBuy.price,
       quantity: location.state.quickBuy.quantity || 1,
       image: location.state.quickBuy.image,
       size: location.state.quickBuy.size || "M",
-      // Add any other fields that might be required by your backend
     };
     orderItems = [quickBuyItem];
     console.log("Using formatted quickBuy item:", quickBuyItem);
@@ -39,7 +39,7 @@ function PaymentComponent() {
     console.log("Using cart items:", cartItems);
   }
 
-  // Calculate subtotal based on orderItems.
+  // Calculate subtotal based on orderItems
   const subTotal = orderItems.reduce(
     (acc, currItem) => acc + currItem.quantity * currItem.price,
     0
@@ -58,7 +58,7 @@ function PaymentComponent() {
     return `order_${orderDateTimeSeconds}_${orderCounter}`;
   }
 
-  // Create order in the DB
+  // Create order in the DB (only for COD and after successful online payment)
   const createOrderInDatabase = async (order) => {
     const token = localStorage.getItem("token");
     const config = {
@@ -68,18 +68,17 @@ function PaymentComponent() {
       },
     };
     try {
-      // Try to normalize the order structure between quickBuy and cart items
       const normalizedOrder = {
         ...order,
         orderItems: order.orderItems.map(item => ({
           ...item,
-          product: item.productId || item.product, // Ensure product field is present
-          productId: item.productId || item.product, // Ensure productId field is present
+          product: item.productId || item.product,
+          productId: item.productId || item.product,
         }))
       };
       
       console.log("Sending normalized order to database:", JSON.stringify(normalizedOrder));
-      await axios.post(`https://kriptees-backend-ays7.onrender.com/api/v1/order/new`, normalizedOrder, config);
+      await axios.post("https://kriptees-backend-ays7.onrender.com/api/v1/order/new", normalizedOrder, config);
       console.log("Order created in database");
     } catch (error) {
       console.error("Error creating order in database:", error);
@@ -89,6 +88,11 @@ function PaymentComponent() {
       }
       throw error;
     }
+  };
+
+  // Store order data temporarily for online payments
+  const storeOrderDataTemporarily = (orderData) => {
+    localStorage.setItem(`tempOrder_${orderData.ID}`, JSON.stringify(orderData));
   };
 
   // Handle payment method selection
@@ -106,7 +110,7 @@ function PaymentComponent() {
     }
   };
 
-  // COD orders
+  // COD orders (create order immediately)
   const handleSubmit = async () => {
     try {
       const orderId = generateOrderId();
@@ -140,11 +144,11 @@ function PaymentComponent() {
     }
   };
 
-  // Online Payment
+  // Online Payment (only create Cashfree order, not DB order)
   const doPayment = async () => {
     let cashfree;
     const initializeSDK = async () => {
-      cashfree = await load({ mode: "production" });
+      cashfree = await load({ mode: "sandbox" });
     };
     await initializeSDK();
 
@@ -164,9 +168,9 @@ function PaymentComponent() {
         ID: orderId
       };
 
-      // Create order in DB first
-      console.log("Final order data for online payment:", order);
-      await createOrderInDatabase(order);
+      // Store order data temporarily (not in database yet)
+      console.log("Storing order data temporarily for online payment:", order);
+      storeOrderDataTemporarily(order);
 
       const token = localStorage.getItem("token");
       const config = {
@@ -176,12 +180,13 @@ function PaymentComponent() {
         },
       };
 
+      // Only create Cashfree order, not database order
       const { data } = await axios.post(
-        `https://kriptees-backend-ays7.onrender.com/api/v1/payment/createOrder`,
+        "https://kriptees-backend-ays7.onrender.com/api/v1/payment/createOrder",
         {
           ...order,
           order_meta: {
-            return_url: `https://kriptees.com//success?orderId=${encodeURIComponent(orderId)}`,
+            return_url: `https://kriptees.com/success?orderId=${encodeURIComponent(orderId)}`,
             notify_url: "https://www.cashfree.com/devstudio/preview/pg/webhooks/24210234",
             payment_methods: "cc,dc,upi",
           },
@@ -189,7 +194,7 @@ function PaymentComponent() {
         config
       );
 
-      console.log("Order created successfully:", data);
+      console.log("Cashfree order created successfully:", data);
 
       const checkoutOptions = {
         paymentSessionId: data.payment_session_id,
@@ -203,8 +208,13 @@ function PaymentComponent() {
         if (result.error) {
           console.log("Payment failed:", result.error);
           toast.error("Payment Failed!");
+          // Clean up temporary order data
+          localStorage.removeItem(`tempOrder_${orderId}`);
           return;
         }
+        // Payment successful - this will redirect to success page
+        // The success page will handle creating the order in database
+        console.log("Payment successful, redirecting to success page");
       });
     } catch (error) {
       console.error("Payment error:", error);
