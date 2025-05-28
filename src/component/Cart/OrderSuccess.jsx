@@ -1,26 +1,35 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useSearchParams, useLocation } from "react-router-dom";
+import { useDispatch } from "react-redux";
 import axios from "axios";
+import { toast } from "react-toastify";
+import { createOrder } from "../../actions/orderAction";
 
 function OrderSuccess() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const location = useLocation();
-  const orderId = searchParams.get("orderId"); // Get orderId from query params
+  const dispatch = useDispatch();
+  
+  const orderId = searchParams.get("orderId");
   const paymentMethod = localStorage.getItem("paymentMethod");
+  
   console.log("Order ID received:", orderId);
   console.log("Payment Method:", paymentMethod);
   console.log("Location state:", location.state);
 
-  const [paymentDetails, setPaymentDetails] = useState([]); // Initialize as an array
+  const [paymentDetails, setPaymentDetails] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [orderCreated, setOrderCreated] = useState(false);
+  const [orderCreationInProgress, setOrderCreationInProgress] = useState(false);
 
   useEffect(() => {
     if (orderId && paymentMethod === "ONLINE") {
       fetchPaymentDetails(orderId);
     } else if (paymentMethod === "COD") {
-      setLoading(false); // No need to fetch payment details for COD
+      setLoading(false);
+      setOrderCreated(true);
     } else {
       setError("No order ID or payment method found.");
       setLoading(false);
@@ -38,14 +47,26 @@ function OrderSuccess() {
       };
 
       const response = await axios.post(
-        `http://localhost:5000/api/v1/payment/check`,
+        `https://kriptees-backend-ays7.onrender.com/api/v1/payment/check`,
         { orderId },
         config
       );
 
-      if (response.data) {
-        setPaymentDetails(response.data); // Assuming response.data is an array
-        updatePaymentInfo(response.data); // Update payment info in the database
+      if (response.data && response.data.length > 0) {
+        setPaymentDetails(response.data);
+        
+        // Check if payment was successful
+        const successfulPayment = response.data.find(payment => 
+          payment.payment_status === "SUCCESS" || 
+          payment.payment_status === "PAID"
+        );
+
+        if (successfulPayment) {
+          console.log("Payment successful, creating order in database");
+          await createOrderAfterPayment(successfulPayment);
+        } else {
+          setError("Payment not successful or still pending");
+        }
       } else {
         setError("No payment details found.");
       }
@@ -57,40 +78,147 @@ function OrderSuccess() {
     }
   };
 
-  const updatePaymentInfo = async (paymentDetails) => {
+  // OrderSuccess.jsx
+
+const createOrderAfterPayment = async (paymentInfo) => {
+  // prevent re-entry in the same render
+  if (orderCreationInProgress) return;
+  setOrderCreationInProgress(true);
+
+  try {
+    // 1) Check persistent flag
+    const already = localStorage.getItem(`orderCreated_${orderId}`);
+    if (already) {
+      console.log("Order already created; skipping.");
+      setOrderCreated(true);
+      return;
+    }
+
+    // 2) *Immediately* set the flag to avoid race
+    localStorage.setItem(`orderCreated_${orderId}`, "true");
+
+    // 3) Grab your temp order
+    const temp = localStorage.getItem(`tempOrder_${orderId}`);
+    if (!temp) throw new Error("Temporary order data not found");
+    const orderData = JSON.parse(temp);
+
+    // 4) Merge payment info
+    orderData.paymentInfo = {
+      id: paymentInfo.cf_payment_id || paymentInfo.payment_id,
+      status: "SUCCESS",
+      payment_method: paymentInfo.payment_method,
+      payment_amount: paymentInfo.payment_amount,
+    };
+
+    // 5) Fire your create-order API
+    await createOrderInDatabase(orderData);
+
+    // 6) Clean up and finish
+    localStorage.removeItem(`tempOrder_${orderId}`);
+    setOrderCreated(true);
+    toast.success("Order created successfully!");
+  } catch (err) {
+    console.error("Error creating order after payment:", err);
+    setError("Failed to create order after payment verification.");
+    // If something really failed before DB write, you might want to clear the flag:
+    // localStorage.removeItem(`orderCreated_${orderId}`);
+  } finally {
+    setOrderCreationInProgress(false);
+    setLoading(false);
+  }
+};
+
+
+  // Create order in database
+  const createOrderInDatabase = async (orderData) => {
+    const token = localStorage.getItem("token");
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+    };
+
     try {
-      const token = localStorage.getItem("token");
-      const config = {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `${token}`,
-        },
+      const normalizedOrder = {
+        ...orderData,
+        orderItems: orderData.orderItems.map(item => ({
+          ...item,
+          product: item.productId || item.product,
+          productId: item.productId || item.product,
+        }))
       };
 
-      const paymentInfo = {
-        id: paymentDetails[0].cf_payment_id, // Assuming order_id is the payment ID
-        status: paymentDetails[0].payment_status, // Payment status from paymentDetails
-      };
-
-      // Update payment info in the database
-      await axios.put(
-        `http://localhost:5000/api/v1/order/updatePaymentInfo/${orderId}`,
-        { paymentInfo },
+      console.log("=== CREATING ORDER IN DATABASE ===");
+      console.log("Order ID:", orderData.ID);
+      console.log("Normalized Order:", normalizedOrder);
+      
+      const response = await axios.post(
+        "https://kriptees-backend-ays7.onrender.com/api/v1/order/new",
+        normalizedOrder,
         config
       );
 
-      console.log("Payment info updated successfully");
+      console.log("✅ Order created successfully in database:", response.data);
+      return response.data;
     } catch (error) {
-      console.error("Error updating payment info:", error);
-      setError("Failed to update payment info.");
+      console.error("❌ Error creating order in database:", error);
+      if (error.response?.status === 409) {
+        console.log("Order already exists - this is expected behavior");
+        return null; // Don't throw error for duplicate orders
+      }
+      throw error;
     }
   };
 
   console.log("paymentDetails", paymentDetails);
 
+  if (loading) {
+    return (
+      <div className="bg-white mt-16" style={{ fontFamily: "Montserrat", letterSpacing: "0.12rem" }}>
+        <div className="bg-white p-6 mt-34 md:mx-auto">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-black mx-auto mb-4"></div>
+            <h3 className="md:text-2xl text-base text-gray-900 font-semibold">
+              {paymentMethod === "ONLINE" ? "Verifying Payment..." : "Processing..."}
+            </h3>
+            <p className="text-gray-600 my-2">Please wait while we confirm your payment</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+  if (error) {
+    return (
+      <div className="bg-white mt-16" style={{ fontFamily: "Montserrat", letterSpacing: "0.12rem" }}>
+        <div className="bg-white p-6 mt-34 md:mx-auto">
+          <svg viewBox="0 0 24 24" className="text-red-600 w-16 h-16 mx-auto my-6">
+            <path
+              fill="currentColor"
+              d="M12,0A12,12,0,1,0,24,12,12.014,12.014,0,0,0,12,0ZM17,13H7a1,1,0,0,1,0-2H17a1,1,0,0,1,0,2Z"
+            ></path>
+          </svg>
+          <div className="text-center">
+            <h3 className="md:text-2xl text-base text-red-900 font-semibold">
+              Order Failed
+            </h3>
+            <p className="text-red-600 my-2">{error}</p>
+            <div className="py-10 text-center">
+              <button
+                onClick={() => navigate("/")}
+                className="px-12 bg-black hover:bg-gray-500 text-white font-semibold py-3"
+              >
+                Back to Home
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="bg-white mt-16"
-    style={{ fontFamily: "Montserrat", letterSpacing: "0.12rem" }}>
+    <div className="bg-white mt-16" style={{ fontFamily: "Montserrat", letterSpacing: "0.12rem" }}>
       <div className="bg-white p-6 mt-34 md:mx-auto">
         <svg viewBox="0 0 24 24" className="text-green-600 w-16 h-16 mx-auto my-6">
           <path
@@ -107,10 +235,6 @@ function OrderSuccess() {
               ? "Thank you for placing your order. Your order will be delivered soon."
               : "Thank you for completing your secure online payment."}
           </p>
-
-          {loading && <p className="text-gray-600">Loading payment details...</p>}
-
-          {error && <p className="text-red-600">{error}</p>}
 
           {paymentMethod === "ONLINE" && paymentDetails.length > 0 && (
             <div className="my-4">
