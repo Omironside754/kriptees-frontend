@@ -148,7 +148,7 @@ function PaymentComponent() {
   const doPayment = async () => {
     let cashfree;
     const initializeSDK = async () => {
-      cashfree = await load({ mode: "sandbox" });
+      cashfree = await load({ mode: "production" });
     };
     await initializeSDK();
 
