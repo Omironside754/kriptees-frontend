@@ -110,10 +110,6 @@ export const load_UserProfile = () => async (dispatch) => {
     dispatch({ type: LOAD_USER_REQUEST });
     
     const token = localStorage.getItem('token');
-    if (!token) {
-      dispatch({ type: LOAD_USER_FAIL, payload: "No token found" });
-      return;
-    }
     
     const config = {
       headers: { 
@@ -128,7 +124,7 @@ export const load_UserProfile = () => async (dispatch) => {
       dispatch({ type: LOAD_USER_SUCCESS, payload: user });
     } else {
       // If not in session storage, make API call
-      const { data } = await axios.get("https://kriptees-backend-ays7.onrender.com/profile", config);
+      const { data } = await axios.get("https://kriptees-backend-ays7.onrender.com/api/v1/profile", config);
       dispatch({ type: LOAD_USER_SUCCESS, payload: data.user });
       sessionStorage.setItem("user", JSON.stringify(data.user));
     }
