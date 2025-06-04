@@ -8,7 +8,7 @@ import ProductCard from "./ProductCard";
 import "./Home.css";
 
 
-const bannerImg = "https://res.cloudinary.com/dafv5daza/image/upload/q_auto,f_auto,w_1600/v1748772251/banner_1_zpdqfe.png";
+const bannerImg = "https://res.cloudinary.com/dafv5daza/image/upload/q_auto,f_auto,w_1600/v1749049330/freepik__upload__74533_usdd1u.png";
 const downImg = "https://res.cloudinary.com/dafv5daza/image/upload/q_auto,f_auto,w_1600/ecommerce%20images/downimg_lv43ag.png";
 const midImg = "https://res.cloudinary.com/dafv5daza/image/upload/q_auto,f_auto,w_1600/ecommerce%20images/midimg_wqrjeu.png";
 const mobBannerImg = "https://res.cloudinary.com/dafv5daza/image/upload/q_auto,f_auto,w_800/ecommerce%20images/mobBanner_fmqsla.png";
