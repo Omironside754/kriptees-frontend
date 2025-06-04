@@ -67,6 +67,27 @@ function Sidebar() {
                 </li>
               </Link>
 
+              {/* Blog Management Links */}
+              <Link
+                to="/admin/blog/new"
+              >
+                <li className=" bg-sky-400 p-2 rounded-md hover:bg-sky-500 font-semibold text-white ">
+                  <span >
+                    Create Blog Post
+                  </span>
+                </li>
+              </Link>
+
+              <Link
+                to="/admin/blog/posts"
+              >
+                <li className=" bg-sky-400 p-2 rounded-md hover:bg-sky-500 font-semibold text-white ">
+                  <span >
+                    Blog Posts List
+                  </span>
+                </li>
+              </Link>
+
               <Link
                 to="/admin/orders"
               >

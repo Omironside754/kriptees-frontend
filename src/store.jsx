@@ -31,6 +31,13 @@ import {
 // Import the wishlistReducer
 import { wishlistReducer } from "./reducers/wishlistReducer";  // Add this import
 
+// Import blog reducers
+import {
+  newBlogPostReducer,
+  blogPostsReducer,
+  blogPostDetailsReducer,
+} from "./reducers/blogReducers";
+
 const rootReducer = combineReducers({
   products: productsReducer,
   productDetails: productDetailsReducer,
@@ -52,6 +59,10 @@ const rootReducer = combineReducers({
   getAllReview: getALLReviewReducer,
   orderTrack: orderTrackingReducer, // Add this line
   wishlist: wishlistReducer,  // Add the wishlistReducer here
+  // Blog reducers
+  newBlogPost: newBlogPostReducer,
+  blogPosts: blogPostsReducer,
+  blogPostDetails: blogPostDetailsReducer,
 });
 
 // Get cart and wishlist data from local storage

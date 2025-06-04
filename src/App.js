@@ -50,6 +50,10 @@ import ResetPassword from "./component/User/ResetPassword";
 import Scroll from "./scroll";
 import { AnimatePresence } from "framer-motion";
 
+// Import Blog Components
+import BlogPage from "./component/Blog/BlogPage";
+import BlogPostDetail from "./component/Blog/BlogPostDetail";
+
 function App() {
   const dispatch = useDispatch();
   const location = useLocation();
@@ -297,6 +301,28 @@ function App() {
                 <PageTransition>
                   <Header />
                   <Products />
+                  <Footer />
+                </PageTransition>
+              }
+            />
+
+            {/* Public Blog Routes */}
+            <Route
+              path="/blog"
+              element={
+                <PageTransition>
+                  <Header />
+                  <BlogPage />
+                  <Footer />
+                </PageTransition>
+              }
+            />
+            <Route
+              path="/blog/post/:postId"
+              element={
+                <PageTransition>
+                  <Header />
+                  <BlogPostDetail />
                   <Footer />
                 </PageTransition>
               }
