@@ -166,8 +166,8 @@ function Footer() {
           <Link to="/careers" className="hover:text-gray-200">
             Careers
           </Link>
-          <Link to="/blogs" className="hover:text-gray-200">
-            Blogs
+          <Link to="/blog" className="hover:text-gray-200">
+            Blog
           </Link>
           <Link to="/contact" className="hover:text-gray-200">
             Contact Us
