@@ -1,110 +1,141 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { createBlogPost, clearBlogErrors, clearBlogMessage } from "../../actions/blogActions";
-// import { useAlert } from 'react-alert'; // Or any other notification system
 
-// Assuming Sidebar is part of a parent Admin layout structure.
-// If not, it might need to be explicitly included here or in App.js routing.
-
-const NewBlogPost = ({ history }) => { // history might be passed if using older react-router for navigation
+const NewBlogPost = () => {
   const dispatch = useDispatch();
-  // const alert = useAlert(); // Example: using react-alert
-
   const { loading, error, success } = useSelector((state) => state.newBlogPost);
 
   const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
-  const [imageUrl, setImageUrl] = useState("");
+  const [blocks, setBlocks] = useState([]); // dynamic content+image structure
 
   useEffect(() => {
     if (error) {
-      // alert.error(error);
       console.error("Blog Creation Error:", error);
       dispatch(clearBlogErrors());
     }
     if (success) {
-      // alert.success("Blog post created successfully!");
       console.log("Blog post created successfully!");
       dispatch(clearBlogMessage());
       setTitle("");
-      setContent("");
-      setImageUrl("");
-      // Optionally navigate to the blog post list
-      // if (history) history.push('/admin/blog/posts');
+      setBlocks([]);
     }
-  }, [dispatch, error, success, /* history */]);
+  }, [dispatch, error, success]);
+
+  const addBlock = (type) => {
+    setBlocks([...blocks, { type, value: "" }]);
+  };
+
+  const handleBlockChange = (index, newValue) => {
+    const newBlocks = [...blocks];
+    newBlocks[index].value = newValue;
+    setBlocks(newBlocks);
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!title.trim() || !content.trim()) {
-      // alert.error("Title and Content are required.");
-      console.error("Title and Content are required.");
+    if (!title.trim()) {
+      console.error("Title is required.");
       return;
     }
+
     const postData = {
       title,
-      content,
-      imageUrl,
-      // Author will be derived by the backend from the token
+      sections: blocks,
     };
+
     dispatch(createBlogPost(postData));
   };
 
   return (
-    // This div would typically be a child of a layout that includes the Sidebar
     <div className="flex-1 p-10">
       <h1 className="text-3xl font-bold mb-6 text-gray-800">Create New Blog Post</h1>
+
       <form onSubmit={handleSubmit} className="bg-white shadow-md rounded-lg px-8 pt-6 pb-8 mb-4">
-        <div className="mb-4">
+        {/* Title */}
+        <div className="mb-6">
           <label htmlFor="title" className="block text-gray-700 text-sm font-bold mb-2">
-            Title
+            Title *
           </label>
           <input
             type="text"
             id="title"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            className="border p-2 w-full rounded"
             required
           />
         </div>
-        <div className="mb-6">
-          <label htmlFor="content" className="block text-gray-700 text-sm font-bold mb-2">
-            Content
-          </label>
-          <textarea
-            id="content"
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            rows="10"
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
-            required
-          ></textarea>
-        </div>
-        <div className="mb-6">
-          <label htmlFor="imageUrl" className="block text-gray-700 text-sm font-bold mb-2">
-            Image URL (Optional)
-          </label>
-          <input
-            type="url"
-            id="imageUrl"
-            value={imageUrl}
-            onChange={(e) => setImageUrl(e.target.value)}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          />
-        </div>
-        <div className="flex items-center justify-between">
+
+        {/* Section Blocks */}
+        {blocks.map((block, index) => (
+          <div key={index} className="mb-6">
+            {block.type === "content" ? (
+              <>
+                <label className="block text-gray-700 text-sm font-bold mb-2">Content #{index + 1}</label>
+                <textarea
+                  rows="6"
+                  value={block.value}
+                  onChange={(e) => handleBlockChange(index, e.target.value)}
+                  className="border p-2 w-full rounded"
+                  placeholder="Enter paragraph text here"
+                  required
+                ></textarea>
+              </>
+            ) : (
+              <>
+                <label className="block text-gray-700 text-sm font-bold mb-2">Image URL #{index + 1}</label>
+                <input
+                  type="url"
+                  value={block.value}
+                  onChange={(e) => handleBlockChange(index, e.target.value)}
+                  className="border p-2 w-full rounded"
+                  placeholder="https://example.com/image.jpg"
+                  required
+                />
+                {block.value && (
+                  <img
+                    src={block.value}
+                    alt={`Preview ${index + 1}`}
+                    className="mt-2 max-h-96 w-full object-contain rounded shadow"
+                  />
+                )}
+              </>
+            )}
+          </div>
+        ))}
+
+        {/* Buttons to Add More Blocks */}
+        <div className="flex gap-4 mb-6">
           <button
-            type="submit"
-            disabled={loading}
-            className={`bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ${loading ? "opacity-50 cursor-not-allowed" : ""}`}
+            type="button"
+            onClick={() => addBlock("content")}
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
           >
-            {loading ? "Creating..." : "Create Post"}
+            + Add Content
+          </button>
+          <button
+            type="button"
+            onClick={() => addBlock("image")}
+            className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+          >
+            + Add Image
           </button>
         </div>
-        {/* Simple text error/success display, replace with toasts as needed */}
+
+        {/* Submit */}
+        <button
+          type="submit"
+          disabled={loading}
+          className={`w-full bg-black text-white py-2 rounded font-bold hover:bg-gray-900 ${
+            loading ? "opacity-50 cursor-not-allowed" : ""
+          }`}
+        >
+          {loading ? "Creating..." : "Create Blog Post"}
+        </button>
+
+        {/* Error display */}
         {error && <p className="text-red-500 text-xs italic mt-4">Error: {error}</p>}
-        {/* Success message is handled by console log and clearing form, can add visible text if needed */}
       </form>
     </div>
   );
