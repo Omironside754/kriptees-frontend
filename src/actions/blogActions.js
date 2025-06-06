@@ -9,35 +9,42 @@ import {
   GET_BLOG_POST_DETAILS_REQUEST,
   GET_BLOG_POST_DETAILS_SUCCESS,
   GET_BLOG_POST_DETAILS_FAIL,
+  UPDATE_BLOG_POST_REQUEST,
+  UPDATE_BLOG_POST_SUCCESS,
+  UPDATE_BLOG_POST_FAIL,
+  DELETE_BLOG_POST_REQUEST,
+  DELETE_BLOG_POST_SUCCESS,
+  DELETE_BLOG_POST_FAIL,
   CLEAR_BLOG_ERRORS,
   CLEAR_BLOG_MESSAGE,
 } from "../constants/blogConstants";
+
+const API_BASE = "https://kriptees-backend-ays7.onrender.com/api/v1";
 
 // Create Blog Post -- Admin
 export const createBlogPost = (postData) => async (dispatch) => {
   try {
     dispatch({ type: CREATE_BLOG_POST_REQUEST });
 
-    const token = localStorage.getItem("adminToken"); // Assuming token is stored here
+    const token = localStorage.getItem("token");
     const config = {
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
+        Authorization: token, 
       },
+      withCredentials: true,
     };
 
-    const { data } = await axios.post("/api/v1/admin/blog/new", postData, config);
+    const { data } = await axios.post(`https://kriptees-backend-ays7.onrender.com/api/v1/admin/blog/new`, postData, config);
 
     dispatch({
       type: CREATE_BLOG_POST_SUCCESS,
-      payload: data, // Assuming API returns { success: true, post: newPost }
+      payload: data,
     });
   } catch (error) {
     dispatch({
       type: CREATE_BLOG_POST_FAIL,
-      payload: error.response && error.response.data.message
-        ? error.response.data.message
-        : error.message,
+      payload: error.response?.data?.message || error.message,
     });
   }
 };
@@ -45,41 +52,96 @@ export const createBlogPost = (postData) => async (dispatch) => {
 // Get All Blog Posts
 export const getAllBlogPosts = () => async (dispatch) => {
   try {
+    console.log("🚀 [getAllBlogPosts] Dispatching request...");
     dispatch({ type: GET_ALL_BLOG_POSTS_REQUEST });
 
-    const { data } = await axios.get("/api/v1/blog");
+    const { data } = await axios.get(`https://kriptees-backend-ays7.onrender.com/api/v1/blogs`);
+    console.log("✅ [getAllBlogPosts] Data received:", data); // ✅ Confirm this
 
     dispatch({
       type: GET_ALL_BLOG_POSTS_SUCCESS,
-      payload: data.posts, // Assuming API returns { success: true, posts: [...] }
+      payload: data.blogs,
     });
   } catch (error) {
+    console.error("🔥 [getAllBlogPosts] Error:", error.response?.data || error.message);
     dispatch({
       type: GET_ALL_BLOG_POSTS_FAIL,
-      payload: error.response && error.response.data.message
-        ? error.response.data.message
-        : error.message,
+      payload: error.response?.data?.message || error.message,
     });
   }
 };
+
 
 // Get Blog Post Details
 export const getBlogPostDetails = (postId) => async (dispatch) => {
   try {
     dispatch({ type: GET_BLOG_POST_DETAILS_REQUEST });
 
-    const { data } = await axios.get(`/api/v1/blog/${postId}`);
+    const { data } = await axios.get(`https://kriptees-backend-ays7.onrender.com/api/v1/blog/${postId}`);
 
     dispatch({
       type: GET_BLOG_POST_DETAILS_SUCCESS,
-      payload: data.post, // Assuming API returns { success: true, post: {...} }
+      payload: data.blog,
     });
   } catch (error) {
     dispatch({
       type: GET_BLOG_POST_DETAILS_FAIL,
-      payload: error.response && error.response.data.message
-        ? error.response.data.message
-        : error.message,
+      payload: error.response?.data?.message || error.message,
+    });
+  }
+};
+
+// Update Blog Post -- Admin
+export const updateBlogPost = (postId, postData) => async (dispatch) => {
+  try {
+    dispatch({ type: UPDATE_BLOG_POST_REQUEST });
+
+    const token = localStorage.getItem("token");
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      withCredentials: true,
+    };
+
+    const { data } = await axios.put(`https://kriptees-backend-ays7.onrender.com/api/v1/admin/blog/${postId}`, postData, config);
+
+    dispatch({
+      type: UPDATE_BLOG_POST_SUCCESS,
+      payload: data,
+    });
+  } catch (error) {
+    dispatch({
+      type: UPDATE_BLOG_POST_FAIL,
+      payload: error.response?.data?.message || error.message,
+    });
+  }
+};
+
+// Delete Blog Post -- Admin
+export const deleteBlogPost = (postId) => async (dispatch) => {
+  try {
+    dispatch({ type: DELETE_BLOG_POST_REQUEST });
+
+    const token = localStorage.getItem("token");
+    const config = {
+      headers: {
+        Authorization: token,
+      },
+      withCredentials: true,
+    };
+
+    const { data } = await axios.delete(`https://kriptees-backend-ays7.onrender.com/api/v1/admin/blog/${postId}`, config);
+
+    dispatch({
+      type: DELETE_BLOG_POST_SUCCESS,
+      payload: data.message,
+    });
+  } catch (error) {
+    dispatch({
+      type: DELETE_BLOG_POST_FAIL,
+      payload: error.response?.data?.message || error.message,
     });
   }
 };
@@ -89,7 +151,7 @@ export const clearBlogErrors = () => (dispatch) => {
   dispatch({ type: CLEAR_BLOG_ERRORS });
 };
 
-// Clear Blog Success Message
+// Clear Blog Message
 export const clearBlogMessage = () => (dispatch) => {
   dispatch({ type: CLEAR_BLOG_MESSAGE });
 };
