@@ -2,14 +2,11 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllBlogPosts, clearBlogErrors } from "../../actions/blogActions";
 import { Link } from "react-router-dom";
-// import { useAlert } from 'react-alert';
+import { deleteBlogPost } from "../../actions/blogActions";
 
-// Assuming Sidebar is part of a parent Admin layout structure.
 
 const BlogPostList = () => {
   const dispatch = useDispatch();
-  // const alert = useAlert();
-
   const { loading, error, posts } = useSelector((state) => state.blogPosts);
 
   useEffect(() => {
@@ -18,7 +15,7 @@ const BlogPostList = () => {
 
   useEffect(() => {
     if (error) {
-      // alert.error(error);
+      
       console.error("Error fetching blog posts:", error);
       dispatch(clearBlogErrors());
     }
@@ -27,6 +24,12 @@ const BlogPostList = () => {
   const formatDate = (dateString) => {
     if (!dateString) return "N/A";
     return new Date(dateString).toLocaleDateString();
+  };
+  
+  const handleDelete = (id) => {
+    if (window.confirm("Are you sure you want to delete this blog post?")) {
+      dispatch(deleteBlogPost(id));
+    }
   };
 
   return (
@@ -74,21 +77,25 @@ const BlogPostList = () => {
                   </td>
                   <td className="py-3 px-6 text-center">
                     <div className="flex item-center justify-center">
-                      {/* Example: Link to view post (if public view exists) */}
-                      {/* <Link to={`/blog/${post._id}`} className="w-4 mr-2 transform hover:text-purple-500 hover:scale-110">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                        </svg>
-                      </Link> */}
-                      {/* Example: Edit link */}
-                      {/* <Link to={`/admin/blog/edit/${post._id}`} className="w-4 mr-2 transform hover:text-purple-500 hover:scale-110">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                        </svg>
-                      </Link> */}
-                      {/* Placeholder for future actions like delete */}
-                       <span className="text-xs text-gray-400">No actions</span>
+
+                      <>
+                        <Link
+                          to={`/admin/blog/edit/${post._id}`}
+                          className="w-5 h-5 mr-3 transform hover:text-blue-500 hover:scale-110"
+                          title="Edit Blog"
+                        >
+                          ✏️
+                        </Link>
+
+                        <button
+                          onClick={() => handleDelete(post._id)}
+                          className="w-5 h-5 transform hover:text-red-500 hover:scale-110"
+                          title="Delete Blog"
+                        >
+                          🗑️
+                        </button>
+                      </>
+
                     </div>
                   </td>
                 </tr>
