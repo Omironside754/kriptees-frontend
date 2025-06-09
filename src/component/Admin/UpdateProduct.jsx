@@ -169,6 +169,20 @@ function UpdateProduct() {
                       onChange={(e) => setStock(e.target.value)}
                     />
                   </div>
+
+                  <div>
+                    <label htmlFor="productInfo" className="block text-gray-700 mb-2">Product Info</label>
+                    <input
+                      type="text"
+                      id="productInfo"
+                      className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+                      placeholder="Product Info"
+                      value={info}
+                      onChange={(e) => setInfo(e.target.value)}
+                      required
+                    />
+                  </div>
+
                   <div>
                     <label className="block text-gray-700 mb-2">Size</label>
                     <input
