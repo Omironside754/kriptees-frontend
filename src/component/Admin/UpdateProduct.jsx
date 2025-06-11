@@ -25,9 +25,9 @@ function UpdateProduct() {
 
   const [name, setName] = useState("");
   const [price, setPrice] = useState(0);
+  const [discount, setDiscount] = useState("");
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("");
-  const [isCategory, setIsCategory] = useState(false);
   const [Stock, setStock] = useState(0);
   const [info, setInfo] = useState('');
   const [imageUrl, setImageUrl] = useState('');
@@ -39,35 +39,24 @@ function UpdateProduct() {
 
   const categories = ["Clothing", "T-shirt", "Hoodie"];
 
-  const handleCategoryChange = (e) => {
-    setCategory(e.target.value);
-    setIsCategory(true);
-  };
-
-  const handleInputChange = (e) => {
-    setImageUrl(e.target.value);
-  };
-
   const handleUpload = () => {
-    if (imageUrl.trim() !== '') {
-      setImageUrls([...imageUrls, { url: imageUrl }]);
-      setImageUrl('');
+    if (imageUrl.trim() !== "") {
+      setImageUrls([...imageUrls, { url: imageUrl.trim() }]);
+      setImageUrl("");
+    } else {
+      toast.warning("Please enter a valid image URL.");
     }
-  };
-
-  const clear = () => {
-    setImageUrls('');
   };
 
   useEffect(() => {
     if (product && product._id !== productId) {
       dispatch(getProductDetails(productId));
-    } else {
+    } else if (product) {
       setName(product.name);
       setDescription(product.description);
       setPrice(product.price);
+      setDiscount(product.discount || 0);
       setCategory(product.category || "Clothing");
-      setIsCategory(true);
       setInfo(product.info);
       setStock(product.Stock);
       setImageUrls(product.images || []);
@@ -91,21 +80,14 @@ function UpdateProduct() {
       navigate("/admin/products");
       dispatch({ type: UPDATE_PRODUCT_RESET });
     }
-  }, [
-    dispatch,
-    error,
-    navigate,
-    isUpdated,
-    productId,
-    product,
-    updateError,
-  ]);
+  }, [dispatch, error, navigate, isUpdated, productId, product, updateError]);
 
   const createProductSubmitHandler = (e) => {
     e.preventDefault();
     const myForm = new FormData();
     myForm.set("name", name);
     myForm.set("price", price);
+    myForm.set("discount", discount ? discount : 0);
     myForm.set("description", description);
     myForm.set("category", category);
     myForm.set("Stock", Stock);
@@ -113,7 +95,11 @@ function UpdateProduct() {
     myForm.set("size", size);
     myForm.set("color", color);
     tags.forEach((tag) => myForm.append("tags", tag));
-    imageUrls.forEach((img) => myForm.append("images", img.url));
+    imageUrls.forEach((currImg) => {
+      if (currImg.url && currImg.url.trim() !== "") {
+        myForm.append("images", currImg.url);
+      }
+    });
 
     dispatch(updateProduct(productId, myForm));
   };
@@ -135,192 +121,95 @@ function UpdateProduct() {
                   encType="multipart/form-data"
                   onSubmit={createProductSubmitHandler}
                 >
-                  <div>
-                    <label className="block text-gray-700 mb-2">Product Name</label>
-                    <input
-                      type="text"
-                      className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-                      placeholder="Product Name"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                    />
-                  </div>
+                  {/* BASIC INPUTS */}
+                  <input className="w-full p-2 border rounded" value={name} onChange={(e) => setName(e.target.value)} placeholder="Product Name" />
+                  <input className="w-full p-2 border rounded" type="number" value={price} onChange={(e) => setPrice(e.target.value)} placeholder="Price" />
+                  <input className="w-full p-2 border rounded" type="number" value={discount} onChange={(e) => setDiscount(e.target.value)} placeholder="Discount (%)" />
+                  <input className="w-full p-2 border rounded" type="number" value={Stock} onChange={(e) => setStock(e.target.value)} placeholder="Stock" />
+                  <input className="w-full p-2 border rounded" value={info} onChange={(e) => setInfo(e.target.value)} placeholder="Product Info" />
+                  <input className="w-full p-2 border rounded" value={size} onChange={(e) => setSize(e.target.value)} placeholder="Size" />
+                  <input className="w-full p-2 border rounded" value={color} onChange={(e) => setColor(e.target.value)} placeholder="Color" />
+                  <textarea className="w-full p-2 border rounded" value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Description" />
+                  <select className="w-full p-2 border rounded" value={category} onChange={(e) => setCategory(e.target.value)}>
+                    {categories.map((cat) => <option key={cat} value={cat}>{cat}</option>)}
+                  </select>
 
-                  <div>
-                    <label className="block text-gray-700 mb-2">Price</label>
-                    <input
-                      type="number"
-                      className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-                      placeholder="Price"
-                      value={price}
-                      onChange={(e) => setPrice(e.target.value)}
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-gray-700 mb-2">Stock</label>
-                    <input
-                      type="number"
-                      className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-                      placeholder="Stock"
-                      value={Stock}
-                      onChange={(e) => setStock(e.target.value)}
-                    />
-                  </div>
-
-                  <div>
-                    <label htmlFor="productInfo" className="block text-gray-700 mb-2">Product Info</label>
-                    <input
-                      type="text"
-                      id="productInfo"
-                      className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-                      placeholder="Product Info"
-                      value={info}
-                      onChange={(e) => setInfo(e.target.value)}
-                      required
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-gray-700 mb-2">Size</label>
-                    <input
-                      type="text"
-                      className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-                      id="size"
-                      value={size}
-                      onChange={(e) => setSize(e.target.value)}
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-gray-700 mb-2">Color</label>
-                    <input
-                      type="text"
-                      className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-                      id="color"
-                      value={color}
-                      onChange={(e) => setColor(e.target.value)}
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-gray-700 mb-2">Description</label>
-                    <textarea
-                      className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-                      placeholder="Description"
-                      value={description}
-                      onChange={(e) => setDescription(e.target.value)}
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-gray-700 mb-2">Category</label>
-                    <select
-                      className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-                      value={category}
-                      onChange={handleCategoryChange}
+                  {/* TAGS */}
+                  <div className="flex space-x-2">
+                    <input className="flex-1 p-2 border rounded" value={tagInput} onChange={(e) => setTagInput(e.target.value)} placeholder="Enter a tag" />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (tagInput.trim()) {
+                          setTags([...tags, tagInput.trim()]);
+                          setTagInput("");
+                        }
+                      }}
+                      className="bg-blue-500 text-white px-4 rounded"
                     >
-                      {categories.map((cate) => (
-                        <option key={cate} value={cate}>
-                          {cate}
-                        </option>
-                      ))}
-                    </select>
+                      Add
+                    </button>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {tags.map((tag, i) => (
+                      <span key={i} className="bg-gray-200 px-2 py-1 rounded">
+                        {tag}
+                        <button onClick={() => setTags(tags.filter((_, idx) => idx !== i))} className="text-red-500 ml-2">&times;</button>
+                      </span>
+                    ))}
                   </div>
 
+                  {/* IMAGE URLs */}
                   <div>
-                    <label className="block text-gray-700 mb-2">Tags</label>
-                    <div className="flex items-center space-x-2">
+                    <label className="block font-medium mb-1">Image URLs</label>
+                    {imageUrls.map((img, idx) => (
+                      <div key={idx} className="flex items-center gap-2 mb-2">
+                        <img
+                          src={img.url}
+                          alt="Product Preview"
+                          className="w-16 h-16 object-cover border rounded"
+                          onError={(e) => { e.target.src = "/no-image.png"; }}
+                        />
+                        <input
+                          type="text"
+                          className="flex-1 p-2 border rounded"
+                          value={img.url}
+                          onChange={(e) => {
+                            const updated = [...imageUrls];
+                            updated[idx].url = e.target.value;
+                            setImageUrls(updated);
+                          }}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setImageUrls(imageUrls.filter((_, i) => i !== idx))}
+                          className="text-red-500 font-bold text-lg"
+                        >
+                          &times;
+                        </button>
+                      </div>
+                    ))}
+                    <div className="flex gap-2 mt-2">
                       <input
-                        type="text"
-                        className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-                        placeholder="Enter a tag"
-                        value={tagInput}
-                        onChange={(e) => setTagInput(e.target.value)}
+                        value={imageUrl}
+                        onChange={(e) => setImageUrl(e.target.value)}
+                        className="flex-1 p-2 border rounded"
+                        placeholder="Enter image URL"
                       />
                       <button
                         type="button"
-                        className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
-                        onClick={() => {
-                          if (tagInput.trim() !== "") {
-                            setTags([...tags, tagInput.trim()]);
-                            setTagInput("");
-                          }
-                        }}
+                        className="bg-blue-500 text-white px-4 py-2 rounded"
+                        onClick={handleUpload}
                       >
-                        Add
+                        Add Image URL
                       </button>
                     </div>
-                    <div className="flex flex-wrap mt-2 space-x-2">
-                      {tags.map((tag, index) => (
-                        <span
-                          key={index}
-                          className="bg-gray-200 text-gray-700 px-3 py-1 rounded-full flex items-center space-x-2"
-                        >
-                          {tag}
-                          <button
-                            type="button"
-                            className="text-red-500 hover:text-red-700"
-                            onClick={() => setTags(tags.filter((_, i) => i !== index))}
-                          >
-                            &times;
-                          </button>
-                        </span>
-                      ))}
-                    </div>
                   </div>
 
-                  <div>
-                    <label className="block text-gray-700 mb-2">Existing Image URLs</label>
-                    <div className="space-y-2">
-                      {imageUrls.map((url, index) => (
-                        <div key={index} className="flex items-center space-x-2">
-                          <input
-                            type="text"
-                            className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-                            value={url.url}
-                            onChange={(e) => {
-                              const updatedImageUrl = imageUrls.map((item, i) =>
-                                i === index ? { ...item, url: e.target.value } : item
-                              );
-                              setImageUrls(updatedImageUrl);
-                            }}
-                          />
-                          <button
-                            type="button"
-                            className="text-red-500 hover:text-red-700"
-                            onClick={() =>
-                              setImageUrls(imageUrls.filter((_, i) => i !== index))
-                            }
-                          >
-                            &times;
-                          </button>
-                        </div>
-                      ))}
-                    </div>
-
-                    {/* 👇 Add New URL Input */}
-                    <div className="mt-4">
-                      <label className="block text-gray-700 mb-2">Enter New Image URL</label>
-                      <input
-                        type="text"
-                        className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-                        placeholder="Image URL"
-                        value={imageUrl}
-                        onChange={(e) => setImageUrl(e.target.value)}
-                      />
-                    </div>
-
-                    {/* 👇 Add Button */}
-                    <button
-                      type="button"
-                      className="mt-2 bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
-                      onClick={handleUpload}
-                    >
-                      Add Image URL
-                    </button>
-                  </div>
+                  {/* SUBMIT */}
                   <button
                     type="submit"
-                    className="w-full bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600"
+                    className="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600"
                     disabled={loading}
                   >
                     Update Product
