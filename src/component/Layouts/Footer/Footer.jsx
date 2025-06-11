@@ -29,7 +29,7 @@ function Footer() {
             <ul className="space-y-2">
               <li><Link to="/about" className="hover:text-gray-400">About Us</Link></li>
               <li><Link to="/careers" className="hover:text-gray-400">Careers</Link></li>
-              <li><Link to="/blog" className="hover:text-gray-400">blogs</Link></li>
+              <li><Link to="/blog" className="hover:text-gray-400">Blogs</Link></li>
             </ul>
           </div>
 
