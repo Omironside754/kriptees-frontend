@@ -30,16 +30,20 @@ const ProductCard = ({ product }) => {
   const imageUrl = hasImagesArray
     ? product.images[0].url
     : hasSingleImage
-    ? product.image
-    : "";
+      ? product.image
+      : "";
 
   // Use productId if _id is not available
   const productId = product._id || product.productId;
 
   // Calculate discounted and old prices
-  let discountPrice = generateDiscountedPrice(product.price);
-  discountPrice = displayMoney(discountPrice);
-  const oldPrice = displayMoney(product.price);
+  const hasDiscount = product.discount && product.discount > 0;
+
+  const discountedPrice = hasDiscount
+    ? displayMoney(product.price - (product.price * product.discount / 100))
+    : null;
+
+  const originalPrice = displayMoney(product.price);
 
   return (
     <div className="border border-gray-300 md:border-gray-600 rounded-md p-2 md:p-4 w-full hover:shadow-lg">
@@ -78,14 +82,14 @@ const ProductCard = ({ product }) => {
 
       {/* Pricing */}
       <div className="mt-1 flex items-center space-x-2">
-        <span className="text-xs md:text-sm font-bold tracking-widest text-gray-900"
-        style={{ fontFamily: "Montserrat", letterSpacing: "0.2rem" }}>
-          {oldPrice}
+        <span className="text-xs md:text-sm font-bold tracking-widest text-gray-900">
+          {hasDiscount ? discountedPrice : originalPrice}
         </span>
-        <span className="text-xs md:text-sm text-red-500 tracking-widest line-through"
-        style={{ fontFamily: "Montserrat", letterSpacing: "0.2rem" }}>
-          {discountPrice}
-        </span>
+        {hasDiscount && (
+          <span className="text-xs md:text-sm text-red-500 tracking-widest line-through">
+            {originalPrice}
+          </span>
+        )}
       </div>
     </div>
   );
