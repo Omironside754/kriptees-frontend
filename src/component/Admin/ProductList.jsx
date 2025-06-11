@@ -61,6 +61,7 @@ function ProductList() {
         stock: item.Stock,
         price: item.price,
         name: item.name,
+        image: item.images && item.images.length > 0 ? item.images[0].url : '',
       });
     });
 
@@ -118,6 +119,9 @@ function ProductList() {
                           Name
                         </th>
                         <th scope="col" class="px-6 py-3">
+                          Preview
+                        </th>
+                        <th scope="col" class="px-6 py-3">
                           Stock
                         </th>
                         <th scope="col" class="px-6 py-3">
@@ -140,6 +144,17 @@ function ProductList() {
 
                           </td>
                           <td class="px-6 py-4">
+                            <img
+                              src={item.image}
+                              alt={item.name}
+                              className="w-12 h-12 object-cover rounded border"
+                              onError={(e) => {
+                                e.target.onerror = null;
+                                e.target.src = "https://via.placeholder.com/50x50?text=No+Image";
+                              }}
+                            />
+                          </td>
+                          <td class="px-6 py-4">
                             {item.stock}
 
                           </td>
@@ -147,25 +162,27 @@ function ProductList() {
                             ₹{item.price}
                           </td>
                           <td class="px-6 py-4">
-                            <button className=" mx-1 px-1 bg-gray-200 rounded-md">
-                              <Link
-                                to={`/admin/product/${item.id}`}
-                              >
+
+                            <Link to={`/admin/product/${item.id}`}>
+                              <button className="mx-1 px-2 bg-gray-200 text-black rounded-md">
                                 Edit
-                              </Link>
-
-                            </button>
+                              </button>
+                            </Link>
+                            <Link to={`/product/${item.id}`}>
+                              <button className="mx-1 px-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">
+                                View
+                              </button>
+                            </Link>
                             <button
-                              onClick={() =>
-                                deleteProductHandler(item.id)
-                              }
-                              className=" mx-1 px-1 bg-red-500 text-white rounded-md">
-
+                              onClick={() => deleteProductHandler(item.id)}
+                              className="mx-1 px-2 bg-red-500 text-white rounded-md"
+                            >
                               Delete
-
                             </button>
+
 
                           </td>
+
                         </tr>
 
                       ))}
