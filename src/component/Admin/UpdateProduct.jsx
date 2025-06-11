@@ -113,9 +113,7 @@ function UpdateProduct() {
     myForm.set("size", size);
     myForm.set("color", color);
     tags.forEach((tag) => myForm.append("tags", tag));
-    imageUrls.forEach((currImg) => {
-      myForm.append("images", currImg.url);
-    });
+    imageUrls.forEach((img) => myForm.append("images", img.url));
 
     dispatch(updateProduct(productId, myForm));
   };
