@@ -271,7 +271,7 @@ function UpdateProduct() {
                   </div>
 
                   <div>
-                    <label className="block text-gray-700 mb-2">Image URLs</label>
+                    <label className="block text-gray-700 mb-2">Existing Image URLs</label>
                     <div className="space-y-2">
                       {imageUrls.map((url, index) => (
                         <div key={index} className="flex items-center space-x-2">
@@ -286,9 +286,40 @@ function UpdateProduct() {
                               setImageUrls(updatedImageUrl);
                             }}
                           />
+                          <button
+                            type="button"
+                            className="text-red-500 hover:text-red-700"
+                            onClick={() =>
+                              setImageUrls(imageUrls.filter((_, i) => i !== index))
+                            }
+                          >
+                            &times;
+                          </button>
                         </div>
                       ))}
                     </div>
+
+                    {/* 👇 Add New URL Input */}
+                    <div className="mt-4">
+                      <label className="block text-gray-700 mb-2">Enter New Image URL</label>
+                      <input
+                        type="text"
+                        className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+                        placeholder="Image URL"
+                        value={imageUrl}
+                        onChange={(e) => setImageUrl(e.target.value)}
+                      />
+                    </div>
+
+                    {/* 👇 Add Button */}
+                    <button
+                      type="button"
+                      className="mt-2 bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
+                      onClick={handleUpload}
+                    >
+                      Add Image URL
+                    </button>
+                  </div>
                     <button
                       type="button"
                       className="mt-2 bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
