@@ -320,15 +320,6 @@ function UpdateProduct() {
                       Add Image URL
                     </button>
                   </div>
-                    <button
-                      type="button"
-                      className="mt-2 bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
-                      onClick={handleUpload}
-                    >
-                      Add Image URL
-                    </button>
-                  </div>
-
                   <button
                     type="submit"
                     className="w-full bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600"
