@@ -16,6 +16,7 @@ function PaymentComponent() {
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [showPayButton, setShowPayButton] = useState(false);
   const [paymentDetails, setPaymentDetails] = useState([]);
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
   console.log("Payment details:", paymentDetails);
 
   // Redux data
@@ -317,10 +318,11 @@ function PaymentComponent() {
 
         {/* Terms & Conditions */}
         <div className="flex items-center mb-6"
-        style={{ fontFamily: "Montserrat", letterSpacing: "0.1rem" }}>
+          style={{ fontFamily: "Montserrat", letterSpacing: "0.1rem" }}>
           <input
-            required
             type="checkbox"
+            checked={agreedToTerms}
+            onChange={(e) => setAgreedToTerms(e.target.checked)}
             className="h-4 w-4 rounded border-gray-300 text-black focus:ring-2 focus:ring-black"
           />
           <label className="ml-2 text-sm text-gray-700 uppercase">
@@ -332,21 +334,27 @@ function PaymentComponent() {
         {paymentMethod === "COD" && showConfirmation && (
           <button
             onClick={handleSubmit}
-            className="w-full bg-black text-white py-3 uppercase font-bold tracking-wider hover:bg-gray-800"
+            disabled={!agreedToTerms}
+            className={`w-full py-3 uppercase font-bold tracking-wider ${agreedToTerms ? "bg-black text-white hover:bg-gray-800" : "bg-gray-300 text-gray-500 cursor-not-allowed"
+              }`}
             style={{ fontFamily: "Montserrat", letterSpacing: "0.1rem" }}
           >
             Place Your Order
           </button>
         )}
+
         {paymentMethod === "ONLINE" && showPayButton && (
           <button
             onClick={doPayment}
-            className="w-full bg-black text-white py-3 uppercase font-bold tracking-wider hover:bg-gray-800"
+            disabled={!agreedToTerms}
+            className={`w-full py-3 uppercase font-bold tracking-wider ${agreedToTerms ? "bg-black text-white hover:bg-gray-800" : "bg-gray-300 text-gray-500 cursor-not-allowed"
+              }`}
             style={{ fontFamily: "Montserrat", letterSpacing: "0.1rem" }}
           >
             Proceed to Pay
           </button>
         )}
+
       </div>
     </div>
   );
