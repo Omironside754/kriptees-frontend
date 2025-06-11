@@ -204,7 +204,22 @@ function NewProduct() {
                     </button>
                     <div className="flex flex-wrap mt-2">
                       {imageUrls.map((url, index) => (
-                        <img key={index} src={url} alt="Product Preview" className="w-24 h-24 object-cover m-1 border rounded" />
+                        <div key={index} className="relative m-1">
+                          <img
+                            src={url}
+                            alt={`Preview ${index}`}
+                            className="w-24 h-24 object-cover border rounded"
+                          />
+                          <button
+                            type="button"
+                            className="absolute top-0 right-0 bg-red-600 text-white text-xs px-1 rounded-bl hover:bg-red-700"
+                            onClick={() =>
+                              setImageUrls(imageUrls.filter((_, i) => i !== index))
+                            }
+                          >
+                            ✕
+                          </button>
+                        </div>
                       ))}
                     </div>
                   </div>
