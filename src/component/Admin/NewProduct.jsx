@@ -18,6 +18,7 @@ function NewProduct() {
 
   const [name, setName] = useState("");
   const [price, setPrice] = useState();
+  const [discount, setDiscount] = useState("");
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("");
   const [stock, setStock] = useState();
@@ -68,6 +69,7 @@ function NewProduct() {
     const myForm = new FormData();
     myForm.set("name", name);
     myForm.set("price", price);
+    myForm.set("discount", discount ? discount : 0);
     myForm.set("description", description);
     myForm.set("category", category);
     myForm.set("Stock", stock);
@@ -111,13 +113,20 @@ function NewProduct() {
                   />
                   <input
                     type="number"
+                    placeholder="Discount (%)"
+                    value={discount}
+                    onChange={(e) => setDiscount(e.target.value)}
+                    className="w-full p-2 border border-gray-300 rounded-md"
+                  />
+                  <input
+                    type="number"
                     placeholder="Stock"
                     value={stock}
                     onChange={(e) => setStock(e.target.value)}
                     required
                     className="w-full p-2 border border-gray-300 rounded-md"
                   />
-                   <input
+                  <input
                     placeholder="Product Info"
                     value={info}
                     onChange={(e) => setInfo(e.target.value)}
@@ -204,22 +213,7 @@ function NewProduct() {
                     </button>
                     <div className="flex flex-wrap mt-2">
                       {imageUrls.map((url, index) => (
-                        <div key={index} className="relative m-1">
-                          <img
-                            src={url}
-                            alt={`Preview ${index}`}
-                            className="w-24 h-24 object-cover border rounded"
-                          />
-                          <button
-                            type="button"
-                            className="absolute top-0 right-0 bg-red-600 text-white text-xs px-1 rounded-bl hover:bg-red-700"
-                            onClick={() =>
-                              setImageUrls(imageUrls.filter((_, i) => i !== index))
-                            }
-                          >
-                            ✕
-                          </button>
-                        </div>
+                        <img key={index} src={url} alt="Product Preview" className="w-24 h-24 object-cover m-1 border rounded" />
                       ))}
                     </div>
                   </div>
