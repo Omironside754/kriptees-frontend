@@ -50,10 +50,10 @@ function Footer() {
               <a href="https://www.facebook.com" className="hover:text-blue-500">
                 <FaFacebook size={24} />
               </a>
-              <a href="https://www.instagram.com" className="hover:text-pink-500">
+              <a href="https://www.instagram.com/kriptees_official/" className="hover:text-pink-500">
                 <FaInstagram size={24} />
               </a>
-              <a href="https://www.youtube.com" className="hover:text-red-500">
+              <a href="https://www.youtube.com/@Kriptees" className="hover:text-red-500">
                 <FaYoutube size={24} />
               </a>
               <a href="https://www.twitter.com" className="hover:text-blue-400">
@@ -62,23 +62,7 @@ function Footer() {
             </div>
           </div>
 
-          {/* Column 4: Newsletter */}
-          {/* <div className="flex flex-col space-y-3">
-            <h4 className="text-lg font-bold">Stay Connected</h4>
-            <p className="text-sm text-gray-400">
-              Join our newsletter for the latest updates and exclusive offers!
-            </p>
-            <div className="mt-2 flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-2">
-              <input
-                type="email"
-                placeholder="Email address"
-                className="p-2 w-full sm:w-auto rounded-md bg-neutral-800 text-white outline-none placeholder-gray-400"
-              />
-              <button className="px-5 py-2 bg-neutral-800 text-white rounded-full hover:bg-gray-700 transition">
-                Subscribe
-              </button>
-            </div>
-          </div> */}
+        
         </div>
 
         {/* Lower Footer Section */}
@@ -123,25 +107,7 @@ function Footer() {
 
       {/* =========== MOBILE FOOTER (new) =========== */}
       <div className="block md:hidden text-center px-4 py-6 space-y-6">
-        {/* Heading */}
-        {/* <h2 className="text-xl font-bold">Stay Connected</h2> */}
-
-        {/* Email address box (non-functional placeholder) */}
-        {/* <div className="mt-4 flex flex-col items-center gap-3 max-w-sm mx-auto">
-          <input
-            type="email"
-            placeholder="Email address"
-            className="flex-1 bg-neutral-800 text-gray-300 py-2 px-4 
-                      rounded-md focus:outline-none focus:ring-2 
-                      focus:ring-neutral-600"
-          />
-          <button
-            className="px-5 py-2 bg-neutral-900 text-white rounded-md 
-                      hover:bg-gray-700 transition"
-          >
-            Subscribe
-          </button>
-        </div> */}
+        
 
 
         {/* Social Icons (Facebook, Instagram, X) */}
@@ -149,7 +115,7 @@ function Footer() {
           <a href="https://www.facebook.com" target="_blank" rel="noreferrer">
             <FaFacebook />
           </a>
-          <a href="https://www.instagram.com" target="_blank" rel="noreferrer">
+          <a href="https://www.instagram.com/kriptees_official/" target="_blank" rel="noreferrer">
             <FaInstagram />
           </a>
           {/* Using FaTwitter to represent "X" */}
