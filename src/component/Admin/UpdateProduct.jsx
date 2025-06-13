@@ -16,7 +16,6 @@ function UpdateProduct() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { id } = useParams();
-  const productId = id;
 
   const { error, product } = useSelector((state) => state.productDetails);
   const { loading, error: updateError, isUpdated } = useSelector(
@@ -49,8 +48,8 @@ function UpdateProduct() {
   };
 
   useEffect(() => {
-    if (product && product._id !== productId) {
-      dispatch(getProductDetails(productId));
+    if (product && product._id !== id) {
+      dispatch(getProductDetails(id));
     } else if (product) {
       setName(product.name);
       setDescription(product.description);
@@ -80,7 +79,7 @@ function UpdateProduct() {
       navigate("/admin/products");
       dispatch({ type: UPDATE_PRODUCT_RESET });
     }
-  }, [dispatch, error, navigate, isUpdated, productId, product, updateError]);
+  }, [dispatch, error, navigate, isUpdated, id, product, updateError]);
 
   const createProductSubmitHandler = (e) => {
     e.preventDefault();
@@ -101,7 +100,7 @@ function UpdateProduct() {
       }
     });
 
-    dispatch(updateProduct(productId, myForm));
+    dispatch(updateProduct(id, myForm));
   };
 
   return (
@@ -116,57 +115,84 @@ function UpdateProduct() {
             <div className="flex w-full justify-center bg-gray-100 min-h-screen">
               <div className="flex flex-col items-center bg-white shadow-lg rounded-lg p-8 m-4 w-full max-w-3xl">
                 <h2 className="text-2xl font-bold text-gray-700 mb-6">Update Product</h2>
-                <form
-                  className="w-full space-y-4"
-                  encType="multipart/form-data"
-                  onSubmit={createProductSubmitHandler}
-                >
-                  {/* BASIC INPUTS */}
-                  <input className="w-full p-2 border rounded" value={name} onChange={(e) => setName(e.target.value)} placeholder="Product Name" />
-                  <input className="w-full p-2 border rounded" type="number" value={price} onChange={(e) => setPrice(e.target.value)} placeholder="Price" />
-                  <input className="w-full p-2 border rounded" type="number" value={discount} onChange={(e) => setDiscount(e.target.value)} placeholder="Discount (%)" />
-                  <input className="w-full p-2 border rounded" type="number" value={Stock} onChange={(e) => setStock(e.target.value)} placeholder="Stock" />
-                  <input className="w-full p-2 border rounded" value={info} onChange={(e) => setInfo(e.target.value)} placeholder="Product Info" />
-                  <input className="w-full p-2 border rounded" value={size} onChange={(e) => setSize(e.target.value)} placeholder="Size" />
-                  <input className="w-full p-2 border rounded" value={color} onChange={(e) => setColor(e.target.value)} placeholder="Color" />
-                  <textarea className="w-full p-2 border rounded" value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Description" />
-                  <select className="w-full p-2 border rounded" value={category} onChange={(e) => setCategory(e.target.value)}>
-                    {categories.map((cat) => <option key={cat} value={cat}>{cat}</option>)}
-                  </select>
+                <form className="w-full" onSubmit={createProductSubmitHandler}>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <label className="flex flex-col">
+                      <span className="text-sm font-medium mb-1">Product Name</span>
+                      <input className="p-2 border rounded" value={name} onChange={(e) => setName(e.target.value)} />
+                    </label>
+                    <label className="flex flex-col">
+                      <span className="text-sm font-medium mb-1">Price (₹)</span>
+                      <input type="number" className="p-2 border rounded" value={price} onChange={(e) => setPrice(e.target.value)} />
+                    </label>
+                    <label className="flex flex-col">
+                      <span className="text-sm font-medium mb-1">Discount (%)</span>
+                      <input type="number" className="p-2 border rounded" value={discount} onChange={(e) => setDiscount(e.target.value)} />
+                    </label>
+                    <label className="flex flex-col">
+                      <span className="text-sm font-medium mb-1">Stock</span>
+                      <input type="number" className="p-2 border rounded" value={Stock} onChange={(e) => setStock(e.target.value)} />
+                    </label>
+                    <label className="flex flex-col sm:col-span-2">
+                      <span className="text-sm font-medium mb-1">Product Info</span>
+                      <input className="p-2 border rounded" value={info} onChange={(e) => setInfo(e.target.value)} />
+                    </label>
+                    <label className="flex flex-col">
+                      <span className="text-sm font-medium mb-1">Size</span>
+                      <input className="p-2 border rounded" value={size} onChange={(e) => setSize(e.target.value)} />
+                    </label>
+                    <label className="flex flex-col">
+                      <span className="text-sm font-medium mb-1">Color</span>
+                      <input className="p-2 border rounded" value={color} onChange={(e) => setColor(e.target.value)} />
+                    </label>
+                    <label className="flex flex-col sm:col-span-2">
+                      <span className="text-sm font-medium mb-1">Description</span>
+                      <textarea className="p-2 border rounded" value={description} onChange={(e) => setDescription(e.target.value)} />
+                    </label>
+                    <label className="flex flex-col sm:col-span-2">
+                      <span className="text-sm font-medium mb-1">Category</span>
+                      <select className="p-2 border rounded" value={category} onChange={(e) => setCategory(e.target.value)}>
+                        {categories.map((cat) => <option key={cat} value={cat}>{cat}</option>)}
+                      </select>
+                    </label>
+                  </div>
 
                   {/* TAGS */}
-                  <div className="flex space-x-2">
-                    <input className="flex-1 p-2 border rounded" value={tagInput} onChange={(e) => setTagInput(e.target.value)} placeholder="Enter a tag" />
-                    <button
-                      type="button"
-                      onClick={() => {
-                        if (tagInput.trim()) {
-                          setTags([...tags, tagInput.trim()]);
-                          setTagInput("");
-                        }
-                      }}
-                      className="bg-blue-500 text-white px-4 rounded"
-                    >
-                      Add
-                    </button>
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    {tags.map((tag, i) => (
-                      <span key={i} className="bg-gray-200 px-2 py-1 rounded">
-                        {tag}
-                        <button onClick={() => setTags(tags.filter((_, idx) => idx !== i))} className="text-red-500 ml-2">&times;</button>
-                      </span>
-                    ))}
+                  <div className="mt-6">
+                    <label className="block font-medium mb-1">Tags</label>
+                    <div className="flex space-x-2">
+                      <input className="flex-1 p-2 border rounded" value={tagInput} onChange={(e) => setTagInput(e.target.value)} placeholder="Enter a tag" />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (tagInput.trim()) {
+                            setTags([...tags, tagInput.trim()]);
+                            setTagInput("");
+                          }
+                        }}
+                        className="bg-blue-500 text-white px-4 py-2 rounded"
+                      >
+                        Add
+                      </button>
+                    </div>
+                    <div className="flex flex-wrap gap-2 mt-2">
+                      {tags.map((tag, i) => (
+                        <span key={i} className="bg-gray-200 px-2 py-1 rounded">
+                          {tag}
+                          <button onClick={() => setTags(tags.filter((_, idx) => idx !== i))} className="text-red-500 ml-2">&times;</button>
+                        </span>
+                      ))}
+                    </div>
                   </div>
 
                   {/* IMAGE URLs */}
-                  <div>
+                  <div className="mt-6">
                     <label className="block font-medium mb-1">Image URLs</label>
                     {imageUrls.map((img, idx) => (
                       <div key={idx} className="flex items-center gap-2 mb-2">
                         <img
                           src={img.url}
-                          alt="Product Preview"
+                          alt="Preview"
                           className="w-16 h-16 object-cover border rounded"
                           onError={(e) => { e.target.src = "/no-image.png"; }}
                         />
@@ -206,10 +232,9 @@ function UpdateProduct() {
                     </div>
                   </div>
 
-                  {/* SUBMIT */}
                   <button
                     type="submit"
-                    className="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600"
+                    className="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600 mt-6"
                     disabled={loading}
                   >
                     Update Product
