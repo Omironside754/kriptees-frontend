@@ -140,7 +140,8 @@ const ProductDetails = () => {
     }
   };
 
-  const checkoutHandler = () => {
+ const checkoutHandler = () => {
+    const finalPrice = product.discount > 0 ? product.price - (product.price * product.discount / 100) : product.price;
     navigate("/shipping", {
       state: {
         quickBuy: {
@@ -148,7 +149,7 @@ const ProductDetails = () => {
           quantity,
           size,
           name: product.name,
-          price: product.price,
+          price: finalPrice,
           image: product.images?.[0]?.url || "",
         },
       },
