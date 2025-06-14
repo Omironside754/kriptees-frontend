@@ -181,9 +181,8 @@ const ProductDetails = () => {
                       src={img.url}
                       loading="lazy"
                       onClick={() => handlePreviewImg(index)}
-                      className={`w-20 h-24 object-cover rounded cursor-pointer ${
-                        index === i ? "ring-2 ring-black" : ""
-                      }`}
+                      className={`w-20 h-24 object-cover rounded cursor-pointer ${index === i ? "ring-2 ring-black" : ""
+                        }`}
                       alt={`thumb-${index}`}
                     />
                   ))}
@@ -208,14 +207,17 @@ const ProductDetails = () => {
 
               <div className="mb-2 flex items-center space-x-3">
                 <span className="text-xl font-bold text-black">
-                  {displayMoney(product.price)}
+                  {product.discount > 0
+                    ? displayMoney(product.price - (product.price * product.discount / 100))
+                    : displayMoney(product.price)}
                 </span>
-                {getOldPrice() && (
+                {product.discount > 0 && (
                   <span className="text-gray-500 line-through text-sm">
-                    {getOldPrice()}
+                    {displayMoney(product.price)}
                   </span>
                 )}
               </div>
+
 
               <div className="text-sm mb-2">
                 {product.Stock > 10 ? (
@@ -234,9 +236,8 @@ const ProductDetails = () => {
                     <button
                       key={s}
                       onClick={() => setSize(s)}
-                      className={`px-4 py-2 border ${
-                        size === s ? "bg-black text-white" : "bg-white text-black"
-                      }`}
+                      className={`px-4 py-2 border ${size === s ? "bg-black text-white" : "bg-white text-black"
+                        }`}
                     >
                       {s}
                     </button>
