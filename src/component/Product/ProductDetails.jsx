@@ -148,7 +148,7 @@ const ProductDetails = () => {
           quantity,
           size,
           name: product.name,
-          price: product.price,
+           price: discountedPrice,
           image: product.images?.[0]?.url || "",
         },
       },
