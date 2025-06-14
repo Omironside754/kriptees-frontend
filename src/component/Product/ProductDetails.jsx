@@ -15,7 +15,8 @@ const displayMoney = (num) => {
     style: "currency",
     currency: "INR",
   });
-  return numFormat.format(num).split(".")[0];
+  const arr = numFormat.format(num).split(".", 1);
+  return arr[0];
 };
 
 const ProductDetails = () => {
@@ -35,11 +36,6 @@ const ProductDetails = () => {
   const { products: allProducts } = useSelector((state) => state.products);
 
   const isInWishlist = wishlistItems?.some((item) => item.productId === id);
-
-  const discountedPriceValue =
-    product?.discount > 0
-      ? product.price - (product.price * product.discount) / 100
-      : product?.price;
 
   useEffect(() => {
     if (error) {
@@ -152,11 +148,17 @@ const ProductDetails = () => {
           quantity,
           size,
           name: product.name,
-          price: discountedPriceValue,
+          price: product.price,
           image: product.images?.[0]?.url || "",
         },
       },
     });
+  };
+
+  const getOldPrice = () => {
+    if (!product.discount || product.discount === 0) return null;
+    const original = product.price / (1 - product.discount / 100);
+    return displayMoney(original);
   };
 
   const convertToPoints = (text) =>
@@ -205,7 +207,9 @@ const ProductDetails = () => {
 
               <div className="mb-2 flex items-center space-x-3">
                 <span className="text-xl font-bold text-black">
-                  {displayMoney(discountedPriceValue)}
+                  {product.discount > 0
+                    ? displayMoney(product.price - (product.price * product.discount / 100))
+                    : displayMoney(product.price)}
                 </span>
                 {product.discount > 0 && (
                   <span className="text-gray-500 line-through text-sm">
@@ -213,6 +217,7 @@ const ProductDetails = () => {
                   </span>
                 )}
               </div>
+
 
               <div className="text-sm mb-2">
                 {product.Stock > 10 ? (
@@ -263,6 +268,7 @@ const ProductDetails = () => {
             </div>
           </div>
 
+          {/* Related Products */}
           {relatedProducts.length > 0 && (
             <div className="mt-10">
               <h3 className="text-xl font-bold mb-4">You may also like</h3>
