@@ -274,7 +274,7 @@ function PaymentComponent() {
           <h4 className="uppercase font-bold text-lg mb-4">Total</h4>
           <div className="flex justify-between items-center mb-2">
             <span className="text-gray-500">Product Cost</span>
-            <span className="text-gray-700 font-medium">Rs.{subTotal}</span>
+            <span className="text-gray-700 font-medium">Rs.{subTotal.toFixed(2)}</span>
           </div>
           <div className="flex justify-between items-center mb-2">
             <span className="text-gray-500">Delivery Charges</span>
@@ -284,7 +284,7 @@ function PaymentComponent() {
           </div>
           <div className="flex justify-between items-center border-t border-gray-300 pt-2">
             <span className="uppercase font-bold">Grand-Total</span>
-            <span className="font-bold">Rs.{grandTotal}</span>
+            <span className="font-bold">Rs.{grandTotal.toFixed(2)}</span>
           </div>
         </div>
 
