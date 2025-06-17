@@ -248,12 +248,45 @@ const ProductDetails = () => {
                 <button onClick={increaseQuantityHandler} className="w-8 h-8 border">+</button>
               </div>
 
-              <div className="flex gap-4 mb-6">
-                <button onClick={handleAddItem} className="border px-6 py-3 hover:border-black">Add to Cart</button>
-                <button onClick={toggleWishlist} className="border px-6 py-3 hover:border-black">
-                  {isInWishlist ? "Wishlisted" : "Wishlist"}
-                </button>
-              </div>
+              <div
+                    className="flex gap-4 mb-6"
+                    style={{ fontFamily: "Montserrat", letterSpacing: "0.1rem" }}
+                  >
+                    <button
+                      onClick={handleAddItem}
+                      className="bg-white border border-gray-300 text-black py-3 uppercase tracking-wider hover:border-black w-full"
+                    >
+                      Add to Cart
+                    </button>
+                    <button
+                      onClick={toggleWishlist}
+                      className="flex items-center justify-center gap-2 px-4 py-2 bg-white border border-gray-300 text-black"
+                    >
+                      {isInWishlist ? (
+                        <>
+                          {/* Red Heart Icon */}
+                          <svg
+                            width="20"
+                            height="20"
+                            viewBox="0 0 24 24"
+                            fill="red"
+                            stroke="red"
+                            strokeWidth="1"
+                          >
+                            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 
+                                    2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09
+                                    C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5
+                                    c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                          </svg>
+                          <span>WISHLISTED</span>
+                        </>
+                      ) : (
+                        /* Only text, centered */
+                        <span>WISHLIST</span>
+                      )}
+                    </button>
+
+                  </div>
               <button onClick={checkoutHandler} className="bg-black text-white w-full py-3">Buy Now</button>
 
               <div className="mt-6 border-t pt-6">
