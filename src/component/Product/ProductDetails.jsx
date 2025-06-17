@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { clearErrors, getProductDetails, getAdminProducts } from "../../actions/productAction";
+import { clearErrors, getProductDetails} from "../../actions/productAction";
 import { addItemToCart } from "../../actions/cartAction";
 import { addItemToWishlist, removeItemFromWishlist } from "../../actions/wishlistAction";
 import { PRODUCT_DETAILS_RESET } from "../../constants/productsConstants";
@@ -54,10 +54,6 @@ const ProductDetails = () => {
       setI(0);
     }
   }, [product]);
-
-  useEffect(() => {
-    dispatch(getAdminProducts());
-  }, [dispatch]);
 
   useEffect(() => {
     if (!product || !allProducts?.length) return;
