@@ -48,7 +48,8 @@ import ForgetPassword from "./component/User/ForgetPassword";
 import ResetPassword from "./component/User/ResetPassword";
 import Scroll from "./scroll";
 import { AnimatePresence } from "framer-motion";
-
+import { isTokenExpired } from "./utils/checkTokenExpiry";
+import { logout } from "./actions/userAction";
 // Import Blog Components
 import BlogPage from "./component/Blog/BlogPage";
 import BlogPostDetail from "./component/Blog/BlogPostDetail";
@@ -62,8 +63,13 @@ function App() {
   const location = useLocation();
 
   useEffect(() => {
-    dispatch(load_UserProfile());
+    if (isTokenExpired()) {
+      dispatch(logout());
+    } else {
+      dispatch(load_UserProfile());
+    }
   }, [dispatch]);
+
   const { isAuthenticated, user, loading } = useSelector((state) => state.userData);
   if (loading) {
     return (
