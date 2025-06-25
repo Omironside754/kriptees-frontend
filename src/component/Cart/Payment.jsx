@@ -10,6 +10,7 @@ function PaymentComponent() {
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch();
+  const BASE_URL = process.env.REACT_APP_BACKEND_BASE_URL;
 
   // Payment state
   const [paymentMethod, setPaymentMethod] = useState(null);
@@ -79,7 +80,7 @@ function PaymentComponent() {
       };
       
       console.log("Sending normalized order to database:", JSON.stringify(normalizedOrder));
-      await axios.post("https://kriptees-backend-ays7.onrender.com/api/v1/order/new", normalizedOrder, config);
+      await axios.post(`${BASE_URL}/order/new`, normalizedOrder, config);
       console.log("Order created in database");
     } catch (error) {
       console.error("Error creating order in database:", error);
@@ -149,7 +150,7 @@ function PaymentComponent() {
   const doPayment = async () => {
     let cashfree;
     const initializeSDK = async () => {
-      cashfree = await load({ mode: "production" });
+      cashfree = await load({ mode: process.env.REACT_APP_CASHFREE_MODE });
     };
     await initializeSDK();
 
@@ -183,11 +184,11 @@ function PaymentComponent() {
 
       // Only create Cashfree order, not database order
       const { data } = await axios.post(
-        "https://kriptees-backend-ays7.onrender.com/api/v1/payment/createOrder",
+        `${BASE_URL}/payment/createOrder`,
         {
           ...order,
           order_meta: {
-            return_url: `https://kriptees.com/success?orderId=${encodeURIComponent(orderId)}`,
+            return_url: `${process.env.REACT_APP_FRONTEND_BASE_URL}/success?orderId=${encodeURIComponent(orderId)}`,
             notify_url: "https://www.cashfree.com/devstudio/preview/pg/webhooks/24210234",
             payment_methods: "cc,dc,upi",
           },

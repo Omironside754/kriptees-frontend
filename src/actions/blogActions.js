@@ -19,7 +19,7 @@ import {
   CLEAR_BLOG_MESSAGE,
 } from "../constants/blogConstants";
 
-const API_BASE = "https://kriptees-backend-ays7.onrender.com/api/v1";
+const BASE_URL = process.env.REACT_APP_BACKEND_BASE_URL;
 
 // Create Blog Post -- Admin
 export const createBlogPost = (postData) => async (dispatch) => {
@@ -35,7 +35,7 @@ export const createBlogPost = (postData) => async (dispatch) => {
       withCredentials: true,
     };
 
-    const { data } = await axios.post(`https://kriptees-backend-ays7.onrender.com/api/v1/admin/blog/new`, postData, config);
+    const { data } = await axios.post(`${BASE_URL}/admin/blog/new`, postData, config);
 
     dispatch({
       type: CREATE_BLOG_POST_SUCCESS,
@@ -55,7 +55,7 @@ export const getAllBlogPosts = () => async (dispatch) => {
     console.log("🚀 [getAllBlogPosts] Dispatching request...");
     dispatch({ type: GET_ALL_BLOG_POSTS_REQUEST });
 
-    const { data } = await axios.get(`https://kriptees-backend-ays7.onrender.com/api/v1/blogs`);
+    const { data } = await axios.get(`${BASE_URL}/blogs`);
     console.log("✅ [getAllBlogPosts] Data received:", data); // ✅ Confirm this
 
     dispatch({
@@ -77,7 +77,7 @@ export const getBlogPostDetails = (postId) => async (dispatch) => {
   try {
     dispatch({ type: GET_BLOG_POST_DETAILS_REQUEST });
 
-    const { data } = await axios.get(`https://kriptees-backend-ays7.onrender.com/api/v1/blog/${postId}`);
+    const { data } = await axios.get(`${BASE_URL}/blog/${postId}`);
 
     dispatch({
       type: GET_BLOG_POST_DETAILS_SUCCESS,
@@ -105,7 +105,8 @@ export const updateBlogPost = (postId, postData) => async (dispatch) => {
       withCredentials: true,
     };
 
-    const { data } = await axios.put(`https://kriptees-backend-ays7.onrender.com/api/v1/admin/blog/${postId}`, postData, config);
+    const { data } = await axios.put(`${BASE_URL}/admin/blog/${postId}`, postData, config);
+    console.log("🚀 [updateBlogPost] Data received:", data); // ✅ Confirm this
 
     dispatch({
       type: UPDATE_BLOG_POST_SUCCESS,
@@ -132,7 +133,7 @@ export const deleteBlogPost = (postId) => async (dispatch) => {
       withCredentials: true,
     };
 
-    const { data } = await axios.delete(`https://kriptees-backend-ays7.onrender.com/api/v1/admin/blog/${postId}`, config);
+    const { data } = await axios.delete(`${BASE_URL}/admin/blog/${postId}`, config);
 
     dispatch({
       type: DELETE_BLOG_POST_SUCCESS,
