@@ -10,6 +10,7 @@ function OrderSuccess() {
   const [searchParams] = useSearchParams();
   const location = useLocation();
   const dispatch = useDispatch();
+  const BASE_URL = process.env.REACT_APP_BACKEND_BASE_URL;
   
   const orderId = searchParams.get("orderId");
   const paymentMethod = localStorage.getItem("paymentMethod");
@@ -47,7 +48,7 @@ function OrderSuccess() {
       };
 
       const response = await axios.post(
-        `https://kriptees-backend-ays7.onrender.com/api/v1/payment/check`,
+        `${BASE_URL}/payment/check`,
         { orderId },
         config
       );
@@ -154,7 +155,7 @@ const createOrderAfterPayment = async (paymentInfo) => {
       console.log("Normalized Order:", normalizedOrder);
       
       const response = await axios.post(
-        "https://kriptees-backend-ays7.onrender.com/api/v1/order/new",
+        `${BASE_URL}/order/new`,
         normalizedOrder,
         config
       );

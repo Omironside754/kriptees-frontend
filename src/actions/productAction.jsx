@@ -30,6 +30,8 @@ import {
   ALL_REVIEW_FAIL,
 } from "../constants/productsConstants";
 
+const BASE_URL = process.env.REACT_APP_BACKEND_BASE_URL;
+
 // get ALL Products
 export const getProduct = (
   keyword = "",
@@ -45,11 +47,11 @@ export const getProduct = (
         type: ALL_PRODUCT_REQUEST,
       });
 
-      let link = `https://kriptees-backend-ays7.onrender.com/api/v1/product?keyword=${keyword}&page=${currentPage}&price[gte]=${price[0]}&price[lte]=${price[1]}&ratings[gte]=${ratings}`;
+      let link = `${BASE_URL}/product?keyword=${keyword}&page=${currentPage}&price[gte]=${price[0]}&price[lte]=${price[1]}&ratings[gte]=${ratings}`;
 
       // when category selected by user then using another link
       if (category) {
-        link = `https://kriptees-backend-ays7.onrender.com/api/v1/product?keyword=${keyword}&page=${currentPage}&price[gte]=${price[0]}&price[lte]=${price[1]}&ratings[gte]=${ratings}&category=${category}`;
+        link = `${BASE_URL}/product?keyword=${keyword}&page=${currentPage}&price[gte]=${price[0]}&price[lte]=${price[1]}&ratings[gte]=${ratings}&category=${category}`;
 
       }
       const { data } = await axios.get(link);
@@ -77,7 +79,7 @@ export const getProductDetails = (id) => {
         type: PRODUCT_DETAILS_REQUEST,
       });
 
-      const { data } = await axios.get(`https://kriptees-backend-ays7.onrender.com/api/v1/product/${id}`);
+      const { data } = await axios.get(`${BASE_URL}/product/${id}`);
 
 
       dispatch({
@@ -106,7 +108,7 @@ export const newReview = (reviewData) => async (dispatch) => {
       }
     };
 
-    const { data } = await axios.put(`https://kriptees-backend-ays7.onrender.com/api/v1/review/new`, reviewData, config);
+    const { data } = await axios.put(`${BASE_URL}/review/new`, reviewData, config);
 
 
     dispatch({ type: NEW_REVIEW_SUCCESS, payload: data.success });
@@ -128,7 +130,7 @@ export const getAdminProducts = () => async (dispatch) => {
       }
     };
 
-    const { data } = await axios.get("https://kriptees-backend-ays7.onrender.com/api/v1/admin/products", config);
+    const { data } = await axios.get(`${BASE_URL}/admin/products`, config);
 
 
     dispatch({ type: ADMIN_PRODUCT_SUCCESS, payload: data.products });
@@ -155,7 +157,7 @@ export function createProduct(productData) {
       };
 
       const { data } = await axios.post(
-        `https://kriptees-backend-ays7.onrender.com/api/v1/admin/product/new`,
+        `${BASE_URL}/admin/product/new`,
 
         productData,
         config
@@ -189,7 +191,7 @@ export function deleteProduct(id) {
         }
       };
 
-      const { data } = await axios.delete(`https://kriptees-backend-ays7.onrender.com/api/v1/admin/product/${id}`, config);
+      const { data } = await axios.delete(`${BASE_URL}/admin/product/${id}`, config);
 
 
       dispatch({ type: DELETE_PRODUCT_SUCCESS, payload: data.success });
@@ -214,7 +216,7 @@ export const updateProduct = (id, productData) => async (dispatch) => {
     };
 
     const { data } = await axios.put(
-      `https://kriptees-backend-ays7.onrender.com/api/v1/admin/product/${id}`,
+      `${BASE_URL}/admin/product/${id}`,
 
       productData,
       config
@@ -238,7 +240,7 @@ export const getAllreviews = (productId) => async (dispatch) => {
   try {
     dispatch({ type: ALL_REVIEW_REQUEST })
 
-    const { data } = await axios.get(`https://kriptees-backend-ays7.onrender.com/api/v1/reviews?id=${productId}`);
+    const { data } = await axios.get(`${BASE_URL}/reviews?id=${productId}`);
 
     dispatch({ type: ALL_REVIEW_SUCCESS, payload: data.reviews })
   } catch (error) {
@@ -253,7 +255,7 @@ export const deleteProductReview = (reviewId, productId) => async (dispatch) => 
     dispatch({ type: DELETE_REVIEW_REQUEST })
 
     const { data } = await axios.delete(
-      `https://kriptees-backend-ays7.onrender.com/api/v1/product/reviews/delete?id=${reviewId}&productId=${productId}`
+      `${BASE_URL}/product/reviews/delete?id=${reviewId}&productId=${productId}`
 
     );
 

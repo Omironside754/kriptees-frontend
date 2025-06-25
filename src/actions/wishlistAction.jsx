@@ -1,10 +1,12 @@
 import { ADD_TO_WISHLIST, REMOVE_WISHLIST_ITEM } from "../constants/wishlistConstants";
 import axios from "axios";
 
+const BASE_URL = process.env.REACT_APP_BACKEND_BASE_URL;
+
 // Add to Wishlist
 export const addItemToWishlist = (id) => async (dispatch, getState) => {
   // Fetch product details using the id
-  const { data } = await axios.get(`https://kriptees-backend-ays7.onrender.com/api/v1/product/${id}`);
+  const { data } = await axios.get(`${BASE_URL}/product/${id}`);
   
   // Dispatch the action to add to wishlist
   dispatch({

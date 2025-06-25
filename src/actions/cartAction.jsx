@@ -4,10 +4,12 @@ import {
   SAVE_SHIPPING_INFO,
 } from "../constants/cartConstant";
 import axios from "axios";
+
+const BASE_URL = process.env.REACT_APP_BACKEND_BASE_URL;
 // Add to Cart
 export const addItemToCart = (id, quantity, size) => async (dispatch, getState) => {
   
-  const { data } = await axios.get(`https://kriptees-backend-ays7.onrender.com/api/v1/product/${id}`);
+  const { data } = await axios.get(`${BASE_URL}/product/${id}`);
   
   dispatch({
     type: ADD_TO_CART,

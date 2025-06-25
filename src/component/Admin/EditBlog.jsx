@@ -63,6 +63,7 @@ const EditBlog = () => {
   const submitHandler = (e) => {
     e.preventDefault();
     const payload = { title, sections };
+    console.log("🚀 Payload being sent →", payload);
     dispatch(updateBlogPost(postId, payload));
   };
 
@@ -87,7 +88,7 @@ const EditBlog = () => {
               Section {index + 1}
             </label>
             <textarea
-              value={section}
+              value={section.value}
               required
               onChange={(e) => handleSectionChange(index, e.target.value)}
               className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500"
