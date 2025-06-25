@@ -70,6 +70,21 @@ function App() {
     }
   }, [dispatch]);
 
+  function usePageViews() {
+  const location = useLocation();
+
+  useEffect(() => {
+    if (window.gtag) {
+      window.gtag('event', 'page_view', {
+        page_path: location.pathname,
+      });
+    }
+  }, [location]);
+}
+
+// Inside App()
+usePageViews();
+
   const { isAuthenticated, user, loading } = useSelector((state) => state.userData);
   if (loading) {
     return (
